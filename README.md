@@ -1,9 +1,13 @@
 # ExConstructorValidator
 
+A personal exercise with macros (basically pretending that `Kernel.struct!/2`
+doesn't exist).
+
 Allows:
-- Custom validation of the `YourModule.new/2` args
+- Custom validation of the `YourModule.new/2` args, which `%YourModule{args}`
+does not allow
 - Raising errors when invalid key is passed as args
-- Raising errors when an `@enforce_keys` key is passed to `YourModule`
+- Raising errors when an `@enforce_keys` key is passed to `YourModule.new/2`
 - named-parameters in `YourModule.new/2`
 
 ### The Problem

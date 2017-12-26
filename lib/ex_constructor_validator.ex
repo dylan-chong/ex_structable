@@ -8,6 +8,7 @@ defmodule ExConstructorValidator do
       require_no_invalid_args: true,
       use_enforce_keys: true,
       validate_struct: true,
+      allow_nil_args: true, # TODO NEXT
     ], options)
 
     quote do
