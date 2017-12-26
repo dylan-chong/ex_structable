@@ -33,6 +33,24 @@ defmodule ExConstructorValidatorTest do
     def validate_struct(_), do: nil
   end
 
+  defmodule HStruct do
+    defstruct [:h]
+    use ExConstructorValidator
+
+    def validate_struct(struct) do
+      if struct.h < 0, do: raise ArgumentError
+      struct
+    end
+
+    def on_successful_new(_) do
+      raise RuntimeError, "on_successful_new called"
+    end
+
+    def on_successful_put(_) do
+      raise RuntimeError, "on_successful_put called"
+    end
+  end
+
   describe "new creates" do
     test "with all params" do
       expected = %ABCStruct{a: 1, b: 2, c: {4, 5}}
@@ -143,4 +161,37 @@ defmodule ExConstructorValidatorTest do
     end
   end
 
+  describe "on_successful_new" do
+    test "is called after new" do
+      assert_raise(
+        RuntimeError,
+        "on_successful_new called",
+        fn -> HStruct.new(h: 1) end
+      )
+    end
+
+    test "is notcalled after failed new" do
+      assert_raise(
+        ArgumentError,
+        fn -> HStruct.new(h: -1) end
+      )
+    end
+  end
+
+  describe "on_successful_put" do
+    test "is called after put" do
+      assert_raise(
+        RuntimeError,
+        "on_successful_put called",
+        fn -> HStruct.put(%HStruct{h: 1}, [h: 2]) end
+      )
+    end
+
+    test "is not called after failed put" do
+      assert_raise(
+        ArgumentError,
+        fn -> HStruct.put(%HStruct{h: 1}, [h: -1]) end
+      )
+    end
+  end
 end
