@@ -13,26 +13,35 @@ defmodule ExConstructorValidatorTest do
     use ExConstructorValidator, require_no_invalid_args: false
   end
 
-  test "new creates with all params" do
-    expected = %ABCStruct{a: 1, b: 2, c: {4, 5}}
-    assert ABCStruct.new(a: 1, b: 2, c: {4, 5}) == expected
+  describe "new creates" do
+    test "with all params" do
+      expected = %ABCStruct{a: 1, b: 2, c: {4, 5}}
+      assert ABCStruct.new(a: 1, b: 2, c: {4, 5}) == expected
+    end
+
+    test "with all non-default params" do
+      expected = %ABCStruct{a: 1, b: 2, c: 3}
+      assert ABCStruct.new(a: 1, b: 2) == expected
+    end
   end
 
-  test "new creates with all non-default params" do
-    expected = %ABCStruct{a: 1, b: 2, c: 3}
-    assert ABCStruct.new(a: 1, b: 2) == expected
-  end
+  describe "when required param is not passed" do
+    test "new fails with default options" do
+      assert_raise(
+        ArgumentError,
+        ~r".*:a.*",
+        fn -> ABCStruct.new([]) end
+      )
+    end
 
-  test "new fails when required param is not passed (:a)" do
-    assert_raise(
-      ArgumentError,
-      ~r".*:a.*",
-      fn -> ABCStruct.new([]) end
-    )
+    test "new creates when use_enforce_keys is false" do
+      expected = %ABCStruct{a: nil, b: [2], c: 3}
+      assert ABCStruct.new([], [use_enforce_keys: false]) == expected
+    end
   end
 
   describe "when passing an invalid parameter" do
-    test "new fails with default __using__ options" do
+    test "new fails with default options" do
       assert_raise(
         ArgumentError,
         ~r"",
@@ -40,11 +49,17 @@ defmodule ExConstructorValidatorTest do
       )
     end
 
-    test "new creates when require_no_invalid_args: false" do
+    test "new creates when __using__ require_no_invalid_args: false" do
       expected = %DEStruct{d: 1, e: 2}
       assert DEStruct.new(d: 1, e: 2, invalid: 3) == expected
     end
 
+    test "new creates when passing require_no_invalid_args: false" do
+      expected = %ABCStruct{a: 1, b: [2], c: 3}
+      assert expected == ABCStruct.new([a: 1, invalid: 3], [
+        require_no_invalid_args: false
+      ])
+    end
   end
 
   # TODO test new with invalid params

@@ -5,22 +5,29 @@ defmodule ExConstructorValidator do
 
   defmacro __using__(options) do
     options = Keyword.merge([
-      require_no_invalid_args: true
+      require_no_invalid_args: true,
+      use_enforce_keys: true
     ], options)
 
     quote do
-      def new(args) do
+      def new(args, override_options \\ []) do
         alias ExConstructorValidator.Helper
 
-        Helper.require_keys(args, @enforce_keys)
-        if unquote(Keyword.fetch!(options, :require_no_invalid_args)) do
+        merged_options =
+          Keyword.merge(unquote(options), override_options)
+        opt = &Keyword.fetch!(merged_options, &1)
+
+        if opt.(:use_enforce_keys) do
+          Helper.require_keys(args, @enforce_keys)
+        end
+        if opt.(:require_no_invalid_args) do
           Helper.require_no_invalid_args(args, __MODULE__)
         end
 
-        create_struct(args)
+        __create_struct__(args)
       end
 
-      def create_struct(args) do
+      def __create_struct__(args) do
         struct(__MODULE__, args)
       end
 
@@ -29,8 +36,9 @@ defmodule ExConstructorValidator do
     # TODO check args
 
     # TODO option to allow fallback to all default args if all args are defaultable
-    # TODO NEXT option to allow no enforce_keys
     # TODO ? option to not allow nil args
+
+    # TODO get to work with exconstructor library
   end
 
   defmodule Helper do
