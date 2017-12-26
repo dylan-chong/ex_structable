@@ -23,6 +23,7 @@ defmodule ExConstructorValidator.Mixfile do
     [
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.11", only: :dev},
     ]
   end
 end

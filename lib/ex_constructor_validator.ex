@@ -34,7 +34,7 @@ defmodule ExConstructorValidator do
           if checked_str == nil do
             # To prevent accidental mistakes
             raise(ExConstructorValidator.InvalidHookError,
-              "__check_struct__ returned nil"
+              "__check_struct__ cannot return nil"
             )
           end
 
@@ -44,6 +44,9 @@ defmodule ExConstructorValidator do
         end
       end
     end
+
+    # TODO NEXT update method
+    # TODO AFTER new/update method hooks
 
     # TODO option to allow fallback to all default args if all args are defaultable
     # TODO ? option to not allow nil args

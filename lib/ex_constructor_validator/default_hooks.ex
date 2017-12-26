@@ -1,9 +1,10 @@
 defmodule ExConstructorValidator.DefaultHooks do
-  @moduledoc "
+  @moduledoc """
   Default hook implementations.
+
   Implement methods below in the module with `use ExConstructorValidator`
   to override behaviour.
-  "
+  """
 
   @doc """
   Override to make struct a custom way.
@@ -16,10 +17,20 @@ defmodule ExConstructorValidator.DefaultHooks do
   end
 
   @doc """
-  Override to throw or return error value.
+  Override to throw or return a custom error value such as `{:error, str}`.
+
   The return value is the return value of YourModule.new/2.
 
   By default returns the given struct.
+
+  You can even define a hook using guards such as:
+  ```
+  def __check_struct__(str = %MyStruct{a: a}) when a > 0 do
+    str
+  end
+  ```
+  because it throws a FunctionClauseError when the guard isn't
+  matched.
   """
   def __check_struct__(str) do
     str
