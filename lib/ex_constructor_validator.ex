@@ -24,22 +24,21 @@ defmodule ExConstructorValidator do
           Helper.require_no_invalid_args(args, __MODULE__)
         end
 
-        __create_struct__(args)
+        str = __call_hook__(:__create_struct__, [args, __MODULE__])
+        __call_hook__(:__check_struct__, [str])
       end
 
-      @doc """
-      Override to throw or return error value.
-      The return value is the return value of YourModule.new/2.
+      def __call_hook__(method, method_args) do
+        module =
+          if __MODULE__.__info__(:functions) |> Keyword.has_key?(method) do
+            __MODULE__
+          else
+            ExConstructorValidator.DefaultHooks
+          end
 
-      By default creates the struct with the given key/value pairs.
-      """
-      def __create_struct__(args) do
-        struct(__MODULE__, args)
+        apply(module, method, method_args)
       end
-
     end
-
-    # TODO check args
 
     # TODO option to allow fallback to all default args if all args are defaultable
     # TODO ? option to not allow nil args
@@ -90,6 +89,30 @@ defmodule ExConstructorValidator do
           <> "were given"
         )
       end
+    end
+  end
+
+  defmodule DefaultHooks do
+    @moduledoc "Default hook implementation"
+
+    @doc """
+    Override to make struct a custom way.
+    The return value is the return value of YourModule.new/2.
+
+    By default creates the struct with the given key/value pairs.
+    """
+    def __create_struct__(args, module) do
+      struct(module, args)
+    end
+
+    @doc """
+    Override to throw or return error value.
+    The return value is the return value of YourModule.new/2.
+
+    By default returns the given struct.
+    """
+    def __check_struct__(str) do
+      str
     end
   end
 

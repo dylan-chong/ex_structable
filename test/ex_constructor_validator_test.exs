@@ -13,6 +13,17 @@ defmodule ExConstructorValidatorTest do
     use ExConstructorValidator, require_no_invalid_args: false
   end
 
+  defmodule FStruct do
+    defstruct [:f]
+    use ExConstructorValidator
+
+    def __check_struct__(%FStruct{f: f}) do
+      if f < 0 do
+        raise ArgumentError, "invalid param"
+      end
+    end
+  end
+
   describe "new creates" do
     test "with all params" do
       expected = %ABCStruct{a: 1, b: 2, c: {4, 5}}
@@ -62,6 +73,20 @@ defmodule ExConstructorValidatorTest do
     end
   end
 
-  # TODO test new with invalid params
+  describe "when __check_struct__ is overriden" do
+    test "new passes with valid params" do
+      FStruct.new(f: 1)
+    end
+
+    test "new fails with invalid param" do
+      assert_raise(
+        ArgumentError,
+        "invalid param",
+        fn -> FStruct.new(f: -1) end
+      )
+    end
+
+    #TODO Optioned it to disable check
+  end
 
 end
