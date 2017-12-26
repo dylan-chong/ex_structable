@@ -106,40 +106,40 @@ defmodule ExConstructorValidatorTest do
       )
     end
 
-    test "updates data with invalid param and check_struct: false" do
+    test "puts data with invalid param and check_struct: false" do
       expected = %FStruct{f: -1}
-      assert expected == FStruct.update(%FStruct{f: 2}, [f: -1], [
+      assert expected == FStruct.put(%FStruct{f: 2}, [f: -1], [
         check_struct: false,
       ])
     end
 
-    test "update fails with invalid data" do
+    test "put fails with invalid data" do
       assert_raise(
         ArgumentError,
         "invalid param",
-        fn -> FStruct.update(%FStruct{f: 1}, [f: -1]) end
+        fn -> FStruct.put(%FStruct{f: 1}, [f: -1]) end
       )
     end
   end
 
-  describe "update" do
+  describe "put" do
     test "fails with non-struct" do
       assert_raise(
         FunctionClauseError,
-        fn -> FStruct.update(:not_a_struct, [f: 1]) end
+        fn -> FStruct.put(:not_a_struct, [f: 1]) end
       )
     end
 
     test "fails with wrong type of struct" do
       assert_raise(
         ArgumentError,
-        fn -> FStruct.update(%GStruct{g: 2}, [g: 1]) end
+        fn -> FStruct.put(%GStruct{g: 2}, [g: 1]) end
       )
     end
 
-    test "updates data successfully" do
+    test "puts data successfully" do
       expected = %FStruct{f: 1}
-      assert expected == FStruct.update(%FStruct{f: 2}, [f: 1])
+      assert expected == FStruct.put(%FStruct{f: 2}, [f: 1])
     end
   end
 

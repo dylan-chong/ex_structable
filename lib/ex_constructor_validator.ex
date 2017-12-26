@@ -44,7 +44,7 @@ defmodule ExConstructorValidator do
         end
       end
 
-      def update(struct = %_{}, args, override_options \\ [])
+      def put(struct = %_{}, args, override_options \\ [])
       when is_list(args) and is_list(override_options) do
         # TODO accept struct being a map or kw list?
         unless struct.__struct__ == __MODULE__ do
