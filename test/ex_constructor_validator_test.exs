@@ -17,11 +17,20 @@ defmodule ExConstructorValidatorTest do
     defstruct [:f]
     use ExConstructorValidator
 
-    def __check_struct__(%FStruct{f: f}) do
+    def __check_struct__(str = %FStruct{f: f}) do
       if f < 0 do
         raise ArgumentError, "invalid param"
       end
+
+      str
     end
+  end
+
+  defmodule GStruct do
+    defstruct [:g]
+    use ExConstructorValidator
+
+    def __check_struct__(_), do: nil
   end
 
   describe "new creates" do
@@ -74,8 +83,8 @@ defmodule ExConstructorValidatorTest do
   end
 
   describe "when __check_struct__ is overriden" do
-    test "new passes with valid params" do
-      FStruct.new(f: 1)
+    test "new creates with valid params" do
+      assert FStruct.new(f: 1) == %FStruct{f: 1}
     end
 
     test "new fails with invalid param" do
@@ -86,7 +95,17 @@ defmodule ExConstructorValidatorTest do
       )
     end
 
-    #TODO Optioned it to disable check
+    test "new creates with invalid param and check_struct: false" do
+      assert FStruct.new([f: -1], [check_struct: false]) == %FStruct{f: -1}
+    end
+
+    test "fails if returns nil" do
+      assert_raise(
+        ExConstructorValidator.InvalidHookError,
+        "__check_struct__ returned nil",
+        fn -> GStruct.new(g: -1) end
+      )
+    end
   end
 
 end

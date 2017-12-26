@@ -6,7 +6,8 @@ defmodule ExConstructorValidator do
   defmacro __using__(options) do
     options = Keyword.merge([
       require_no_invalid_args: true,
-      use_enforce_keys: true
+      use_enforce_keys: true,
+      check_struct: true,
     ], options)
 
     quote do
@@ -25,7 +26,21 @@ defmodule ExConstructorValidator do
         end
 
         str = __call_hook__(:__create_struct__, [args, __MODULE__])
-        __call_hook__(:__check_struct__, [str])
+
+        if opt.(:check_struct) do
+          checked_str = __call_hook__(:__check_struct__, [str])
+
+          if checked_str == nil do
+            # To prevent accidental mistakes
+            raise(ExConstructorValidator.InvalidHookError,
+              "__check_struct__ returned nil"
+            )
+          end
+
+          checked_str
+        else
+          str
+        end
       end
 
       def __call_hook__(method, method_args) do
@@ -116,4 +131,11 @@ defmodule ExConstructorValidator do
     end
   end
 
+  defmodule InvalidHookError do
+    defexception [:message]
+
+    def exception(message) do
+      %InvalidHookError{message: message}
+    end
+  end
 end
