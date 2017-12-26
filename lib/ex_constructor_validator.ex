@@ -27,15 +27,15 @@ defmodule ExConstructorValidator do
           Helper.require_no_invalid_args(args, __MODULE__)
         end
 
-        struct = call_hook.(:__create_struct__, [args, __MODULE__])
+        struct = call_hook.(:create_struct, [args, __MODULE__])
 
         if opt.(:validate_struct) do
-          validated_struct = call_hook.(:__validate_struct__, [struct])
+          validated_struct = call_hook.(:validate_struct, [struct])
 
           if validated_struct == nil do
             # To prevent accidental mistakes
             raise ExConstructorValidator.InvalidHookError,
-              "__validate_struct__ cannot return nil"
+              "validate_struct cannot return nil"
           end
 
           validated_struct
@@ -59,8 +59,6 @@ defmodule ExConstructorValidator do
         |> new(override_options)
       end
     end
-
-    # TODO AFTER new/update method hooks
 
     # TODO option to allow fallback to all default args if all args are defaultable
     # TODO ? option to not allow nil args
