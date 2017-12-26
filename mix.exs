@@ -22,6 +22,7 @@ defmodule ExConstructorValidator.Mixfile do
   defp deps do
     [
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
     ]
   end
 end

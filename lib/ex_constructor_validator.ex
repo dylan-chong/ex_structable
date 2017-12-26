@@ -27,6 +27,12 @@ defmodule ExConstructorValidator do
         __create_struct__(args)
       end
 
+      @doc """
+      Override to throw or return error value.
+      The return value is the return value of YourModule.new/2.
+
+      By default creates the struct with the given key/value pairs.
+      """
       def __create_struct__(args) do
         struct(__MODULE__, args)
       end
@@ -37,11 +43,14 @@ defmodule ExConstructorValidator do
 
     # TODO option to allow fallback to all default args if all args are defaultable
     # TODO ? option to not allow nil args
+    # TODO At option to update
 
     # TODO get to work with exconstructor library
   end
 
   defmodule Helper do
+    @moduledoc "Helper functionality for ExConstructorValidator"
+
     def require_keys(args, enforce_keys) do
       arg_keys =
         args

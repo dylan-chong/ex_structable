@@ -64,5 +64,4 @@ defmodule ExConstructorValidatorTest do
 
   # TODO test new with invalid params
 
-  # TODO get to work with exconstructor library
 end
