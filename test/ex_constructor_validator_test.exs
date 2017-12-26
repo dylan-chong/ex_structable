@@ -17,12 +17,12 @@ defmodule ExConstructorValidatorTest do
     defstruct [:f]
     use ExConstructorValidator
 
-    def __check_struct__(str = %FStruct{f: f}) do
+    def __check_struct__(struct = %FStruct{f: f}) do
       if f < 0 do
         raise ArgumentError, "invalid param"
       end
 
-      str
+      struct
     end
   end
 
@@ -64,7 +64,6 @@ defmodule ExConstructorValidatorTest do
     test "new fails with default options" do
       assert_raise(
         ArgumentError,
-        ~r"",
         fn -> ABCStruct.new([a: 1, invalid: 2]) end
       )
     end
@@ -106,6 +105,45 @@ defmodule ExConstructorValidatorTest do
         fn -> GStruct.new(g: -1) end
       )
     end
+
+    test "updates data with invalid param and check_struct: false" do
+      expected = %FStruct{f: -1}
+      assert expected == FStruct.update(%FStruct{f: 2}, [f: -1], [
+        check_struct: false,
+      ])
+    end
+
+    test "update fails with invalid data" do
+      assert_raise(
+        ArgumentError,
+        "invalid param",
+        fn -> FStruct.update(%FStruct{f: 1}, [f: -1]) end
+      )
+    end
+  end
+
+  describe "update" do
+    test "fails with non-struct" do
+      assert_raise(
+        FunctionClauseError,
+        fn -> FStruct.update(:not_a_struct, [f: 1]) end
+      )
+    end
+
+    test "fails with wrong type of struct" do
+      assert_raise(
+        ArgumentError,
+        fn -> FStruct.update(%GStruct{g: 2}, [g: 1]) end
+      )
+    end
+
+    test "updates data successfully" do
+      expected = %FStruct{f: 1}
+      assert expected == FStruct.update(%FStruct{f: 2}, [f: 1])
+    end
+  end
+
+  test "**8" do
   end
 
 end

@@ -11,7 +11,8 @@ defmodule ExConstructorValidator do
     ], options)
 
     quote do
-      def new(args, override_options \\ []) do
+      def new(args, override_options \\ [])
+      when is_list(args) and is_list(override_options) do
         alias ExConstructorValidator.Helper
 
         merged_options =
@@ -26,26 +27,41 @@ defmodule ExConstructorValidator do
           Helper.require_no_invalid_args(args, __MODULE__)
         end
 
-        str = call_hook.(:__create_struct__, [args, __MODULE__])
+        struct = call_hook.(:__create_struct__, [args, __MODULE__])
 
         if opt.(:check_struct) do
-          checked_str = call_hook.(:__check_struct__, [str])
+          checked_struct = call_hook.(:__check_struct__, [struct])
 
-          if checked_str == nil do
+          if checked_struct == nil do
             # To prevent accidental mistakes
-            raise(ExConstructorValidator.InvalidHookError,
+            raise ExConstructorValidator.InvalidHookError,
               "__check_struct__ cannot return nil"
-            )
           end
 
-          checked_str
+          checked_struct
         else
-          str
+          struct
         end
+      end
+
+      def update(struct = %_{}, args, override_options \\ [])
+      when is_list(args) and is_list(override_options) do
+        # TODO accept struct being a map or kw list?
+        unless struct.__struct__ == __MODULE__ do
+          raise ArgumentError,
+            "#{inspect(struct)} struct is not a %#{__MODULE__}{}"
+        end
+
+        struct
+        |> Map.from_struct
+        |> Keyword.new
+        |> Keyword.merge(args)
+        |> new(override_options)
       end
     end
 
     # TODO NEXT update method
+    # TODO AFTER renamed check construct to validate struct
     # TODO AFTER new/update method hooks
 
     # TODO option to allow fallback to all default args if all args are defaultable
