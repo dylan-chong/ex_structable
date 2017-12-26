@@ -1,6 +1,6 @@
 defmodule ExConstructorValidator do
   @moduledoc """
-  Documentation for ExConstructorValidator.
+  See README https://github.com/dylan-chong/ex_constructor_validator
   """
 
   defmacro __using__(options) do
