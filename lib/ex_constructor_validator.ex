@@ -7,7 +7,7 @@ defmodule ExConstructorValidator do
     options = Keyword.merge([
       require_no_invalid_args: true,
       use_enforce_keys: true,
-      check_struct: true,
+      validate_struct: true,
     ], options)
 
     quote do
@@ -29,16 +29,16 @@ defmodule ExConstructorValidator do
 
         struct = call_hook.(:__create_struct__, [args, __MODULE__])
 
-        if opt.(:check_struct) do
-          checked_struct = call_hook.(:__check_struct__, [struct])
+        if opt.(:validate_struct) do
+          validated_struct = call_hook.(:__validate_struct__, [struct])
 
-          if checked_struct == nil do
+          if validated_struct == nil do
             # To prevent accidental mistakes
             raise ExConstructorValidator.InvalidHookError,
-              "__check_struct__ cannot return nil"
+              "__validate_struct__ cannot return nil"
           end
 
-          checked_struct
+          validated_struct
         else
           struct
         end
@@ -60,8 +60,6 @@ defmodule ExConstructorValidator do
       end
     end
 
-    # TODO NEXT update method
-    # TODO AFTER renamed check construct to validate struct
     # TODO AFTER new/update method hooks
 
     # TODO option to allow fallback to all default args if all args are defaultable

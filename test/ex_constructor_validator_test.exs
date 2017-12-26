@@ -17,7 +17,7 @@ defmodule ExConstructorValidatorTest do
     defstruct [:f]
     use ExConstructorValidator
 
-    def __check_struct__(struct = %FStruct{f: f}) do
+    def __validate_struct__(struct = %FStruct{f: f}) do
       if f < 0 do
         raise ArgumentError, "invalid param"
       end
@@ -30,7 +30,7 @@ defmodule ExConstructorValidatorTest do
     defstruct [:g]
     use ExConstructorValidator
 
-    def __check_struct__(_), do: nil
+    def __validate_struct__(_), do: nil
   end
 
   describe "new creates" do
@@ -81,7 +81,7 @@ defmodule ExConstructorValidatorTest do
     end
   end
 
-  describe "when __check_struct__ is overriden" do
+  describe "when __validate_struct__ is overriden" do
     test "new creates with valid params" do
       assert FStruct.new(f: 1) == %FStruct{f: 1}
     end
@@ -94,22 +94,22 @@ defmodule ExConstructorValidatorTest do
       )
     end
 
-    test "new creates with invalid param and check_struct: false" do
-      assert FStruct.new([f: -1], [check_struct: false]) == %FStruct{f: -1}
+    test "new creates with invalid param and validate_struct: false" do
+      assert FStruct.new([f: -1], [validate_struct: false]) == %FStruct{f: -1}
     end
 
     test "fails if returns nil" do
       assert_raise(
         ExConstructorValidator.InvalidHookError,
-        "__check_struct__ cannot return nil",
+        "__validate_struct__ cannot return nil",
         fn -> GStruct.new(g: -1) end
       )
     end
 
-    test "puts data with invalid param and check_struct: false" do
+    test "puts data with invalid param and validate_struct: false" do
       expected = %FStruct{f: -1}
       assert expected == FStruct.put(%FStruct{f: 2}, [f: -1], [
-        check_struct: false,
+        validate_struct: false,
       ])
     end
 
@@ -137,7 +137,7 @@ defmodule ExConstructorValidatorTest do
       )
     end
 
-    test "puts data successfully" do
+    test "updates data successfully" do
       expected = %FStruct{f: 1}
       assert expected == FStruct.put(%FStruct{f: 2}, [f: 1])
     end

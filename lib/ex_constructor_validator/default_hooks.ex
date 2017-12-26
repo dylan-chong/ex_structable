@@ -25,14 +25,14 @@ defmodule ExConstructorValidator.DefaultHooks do
 
   You can even define a hook using guards such as:
   ```
-  def __check_struct__(struct = %MyStruct{a: a}) when a > 0 do
+  def __validate_struct__(struct = %MyStruct{a: a}) when a > 0 do
     struct
   end
   ```
   because it throws a FunctionClauseError when the guard isn't
   matched.
   """
-  def __check_struct__(struct) do
+  def __validate_struct__(struct) do
     struct
   end
 end
