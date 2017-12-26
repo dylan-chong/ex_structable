@@ -36,4 +36,25 @@ defmodule ExConstructorValidator.DefaultHooks do
   def validate_struct(struct) do
     struct
   end
+
+  @doc """
+  Called when a struct has passed validation after a call to
+  `YourModule.new/2`.
+
+  Override to add custom functionality.
+  """
+  def on_successful_new(struct) do
+    # Stub
+  end
+
+  @doc """
+  Called when a struct has passed validation after a call to
+  `YourModule.put/3`.
+
+  Override to add custom functionality.
+  """
+  def on_successful_put(struct) do
+    # Stub
+  end
+
 end

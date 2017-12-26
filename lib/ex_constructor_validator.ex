@@ -29,7 +29,7 @@ defmodule ExConstructorValidator do
 
         struct = call_hook.(:create_struct, [args, __MODULE__])
 
-        if opt.(:validate_struct) do
+        result = if opt.(:validate_struct) do
           validated_struct = call_hook.(:validate_struct, [struct])
 
           if validated_struct == nil do
@@ -42,21 +42,32 @@ defmodule ExConstructorValidator do
         else
           struct
         end
+
+        unless merged_options[:not_new] do
+          call_hook.(:on_successful_new, [result])
+        end
+        result
       end
 
       def put(struct = %_{}, args, override_options \\ [])
       when is_list(args) and is_list(override_options) do
+        alias ExConstructorValidator.Helper
+
         # TODO accept struct being a map or kw list?
         unless struct.__struct__ == __MODULE__ do
           raise ArgumentError,
             "#{inspect(struct)} struct is not a %#{__MODULE__}{}"
         end
 
-        struct
-        |> Map.from_struct
-        |> Keyword.new
-        |> Keyword.merge(args)
-        |> new(override_options)
+        result =
+          struct
+          |> Map.from_struct
+          |> Keyword.new
+          |> Keyword.merge(args)
+          |> new(Keyword.put(override_options, :not_new, true))
+
+        Helper.call_hook(__MODULE__, :on_successful_put, [result])
+        result
       end
     end
 
@@ -65,6 +76,8 @@ defmodule ExConstructorValidator do
     # TODO At option to update
 
     # TODO get to work with exconstructor library
+    # TODO typespecs
+    # TODO publish in hex
   end
 
 end
