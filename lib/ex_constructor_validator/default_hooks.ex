@@ -14,7 +14,7 @@ defmodule ExConstructorValidator.DefaultHooks do
   By default creates the struct with the given key/value pairs.
   """
   def create_struct(args, module) do
-    Kernel.struct(module, args)
+    Kernel.struct!(module, args)
   end
 
   @doc """

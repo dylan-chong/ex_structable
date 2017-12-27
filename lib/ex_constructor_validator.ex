@@ -5,10 +5,7 @@ defmodule ExConstructorValidator do
 
   defmacro __using__(options) do
     options = Keyword.merge([
-      require_no_invalid_args: true,
-      use_enforce_keys: true,
       validate_struct: true,
-      allow_nil_args: true, # TODO NEXT
     ], options)
 
     quote do
@@ -20,13 +17,6 @@ defmodule ExConstructorValidator do
           Keyword.merge(unquote(options), override_options)
         opt = &Keyword.fetch!(merged_options, &1)
         call_hook = &Helper.call_hook(__MODULE__, &1, &2)
-
-        if opt.(:use_enforce_keys) do
-          Helper.require_keys(args, @enforce_keys)
-        end
-        if opt.(:require_no_invalid_args) do
-          Helper.require_no_invalid_args(args, __MODULE__)
-        end
 
         struct = call_hook.(:create_struct, [args, __MODULE__])
 
@@ -44,9 +34,10 @@ defmodule ExConstructorValidator do
           struct
         end
 
-        unless merged_options[:not_new] do
-          call_hook.(:on_successful_new, [result])
-        end
+        call_hook.(
+          merged_options[:on_success] || :on_successful_new,
+          [result]
+        )
         result
       end
 
@@ -65,16 +56,15 @@ defmodule ExConstructorValidator do
           |> Map.from_struct
           |> Keyword.new
           |> Keyword.merge(args)
-          |> new(Keyword.put(override_options, :not_new, true))
+          |> new(Keyword.put(
+            override_options,
+            :on_success,
+            :on_successful_put
+          ))
 
-        Helper.call_hook(__MODULE__, :on_successful_put, [result])
         result
       end
     end
-
-    # TODO option to allow fallback to all default args if all args are defaultable
-    # TODO ? option to not allow nil args
-    # TODO At option to update
 
     # TODO get to work with exconstructor library
     # TODO typespecs
