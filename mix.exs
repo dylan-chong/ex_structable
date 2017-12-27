@@ -1,6 +1,8 @@
 defmodule ExStructable.Mixfile do
   use Mix.Project
 
+  @github_url "https://github.com/dylan-chong/ex_structable"
+
   def project do
     [
       app: :ex_structable,
@@ -15,8 +17,10 @@ defmodule ExStructable.Mixfile do
         "coveralls": :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test
+        "coveralls.html": :test,
       ],
+      source_url: @github_url,
+      homepage_url: @github_url,
     ]
   end
 
@@ -46,7 +50,7 @@ defmodule ExStructable.Mixfile do
     [
       licenses: ["Apache 2.0"],
       maintainers: ["Dylan Chong"],
-      links: %{"GitHub" => "https://github.com/dylan-chong/ex_structable"},
+      links: %{"GitHub" => @github_url},
     ]
   end
 
