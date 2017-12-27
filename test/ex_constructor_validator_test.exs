@@ -10,14 +10,14 @@ defmodule ExConstructorValidatorTest do
 
   defmodule DEStruct do
     defstruct [:d, :e]
-    use ExConstructorValidator, require_no_invalid_args: false
+    use ExConstructorValidator
   end
 
   defmodule FStruct do
     defstruct [:f]
     use ExConstructorValidator
 
-    def validate_struct(struct = %FStruct{f: f}) do
+    def validate_struct(struct = %FStruct{f: f}, _) do
       if f < 0 do
         raise ArgumentError, "invalid param"
       end
@@ -30,26 +30,43 @@ defmodule ExConstructorValidatorTest do
     defstruct [:g]
     use ExConstructorValidator
 
-    def validate_struct(_), do: nil
+    def validate_struct(_, _), do: nil
   end
 
   defmodule HStruct do
     defstruct [:h]
     use ExConstructorValidator
 
-    def validate_struct(struct) do
+    def validate_struct(struct, _) do
       if struct.h < 0, do: raise ArgumentError
       struct
     end
 
-    def on_successful_new(_) do
+    def on_successful_new(_, _) do
       raise RuntimeError, "on_successful_new called"
     end
 
-    def on_successful_put(_) do
+    def on_successful_put(_, _) do
       raise RuntimeError, "on_successful_put called"
     end
   end
+
+  defmodule Point do
+    defstruct [:x, :y, :z]
+
+    use ExConstructorValidator, use_ex_constructor_library: true
+
+    def validate_struct(struct, _) do
+      if struct.x < 0 or struct.y < 0 or struct.z < 0 do
+        raise ArgumentError
+      end
+
+      struct
+    end
+  end
+
+  # @enforce_keys [:x, :y]
+  # TODO use and make PointWithEnforce when ExConstructor fix their library
 
   describe "new creates" do
     test "with all params" do
@@ -177,4 +194,17 @@ defmodule ExConstructorValidatorTest do
       )
     end
   end
+
+  describe "__using__ ExConstructor" do
+    test "new creates from Keyword List" do
+      expected = %Point{x: 1, y: 2, z: nil}
+      assert expected == Point.new(x: 1, y: 2)
+    end
+
+    test "new creates from Map" do
+      expected = %Point{x: 1, y: 2, z: nil}
+      assert expected == Point.new(%{x: 1, y: 2})
+    end
+  end
+
 end

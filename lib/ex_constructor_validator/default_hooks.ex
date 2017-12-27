@@ -13,16 +13,14 @@ defmodule ExConstructorValidator.DefaultHooks do
   By default creates the struct with the given key/value pairs.
   This is used in both `YourModule.new/2` and `YourModule.put/3`.
 
-  If you are using [exconstructor](https://github.com/appcues/exconstructor),
+  If you are using [ExConstructor](https://github.com/appcues/exconstructor),
   then overriding this method will be useful:
-
   ```
   defmodule Point do
     @enforce_keys [:x, :y]
     defstruct [:x, :y, :z]
 
-    use ExConstructor, name: :__new__
-    use ExConstructorValidator # Adds `new` and `put` dynamically
+    use ExConstructorValidator
 
     def create_struct(args, _) do
       __new__(args)
@@ -37,8 +35,12 @@ defmodule ExConstructorValidator.DefaultHooks do
     end
   end
   """
-  def create_struct(args, module) do
-    Kernel.struct!(module, args)
+  def create_struct(args, module, options) do
+    if Keyword.fetch!(options, :use_ex_constructor_library) do
+      apply(module, ExConstructorValidator.ex_constructor_new_name(), [args])
+    else
+      Kernel.struct!(module, args)
+    end
   end
 
   @doc """
@@ -57,7 +59,7 @@ defmodule ExConstructorValidator.DefaultHooks do
   because it throws a FunctionClauseError when the guard isn't
   matched.
   """
-  def validate_struct(struct) do
+  def validate_struct(struct, options) do
     struct
   end
 
@@ -67,7 +69,7 @@ defmodule ExConstructorValidator.DefaultHooks do
 
   Override to add custom functionality.
   """
-  def on_successful_new(struct) do
+  def on_successful_new(struct, options) do
     # Stub
   end
 
@@ -77,7 +79,7 @@ defmodule ExConstructorValidator.DefaultHooks do
 
   Override to add custom functionality.
   """
-  def on_successful_put(struct) do
+  def on_successful_put(struct, options) do
     # Stub
   end
 
