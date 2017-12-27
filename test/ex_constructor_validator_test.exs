@@ -51,6 +51,18 @@ defmodule ExConstructorValidatorTest do
     end
   end
 
+  defmodule IStruct do
+    defstruct [:the_field]
+    use ExConstructorValidator, use_ex_constructor_library: true
+  end
+
+  defmodule JStruct do
+    defstruct [:the_field]
+    use ExConstructorValidator, use_ex_constructor_library: [
+      camelcase: false
+    ]
+  end
+
   defmodule Point do
     defstruct [:x, :y, :z]
 
@@ -204,6 +216,16 @@ defmodule ExConstructorValidatorTest do
     test "new creates from Map" do
       expected = %Point{x: 1, y: 2, z: nil}
       assert expected == Point.new(%{x: 1, y: 2})
+    end
+
+    test "new creates with camel case field with ex_constructor" do
+      expected = %IStruct{the_field: 1}
+      assert expected == IStruct.new(theField: 1)
+    end
+
+    test "new does not create with camel case without ex_constructor option" do
+      expected = %JStruct{the_field: nil}
+      assert expected == JStruct.new(theField: 1)
     end
   end
 

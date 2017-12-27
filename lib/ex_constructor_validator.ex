@@ -1,21 +1,54 @@
 defmodule ExConstructorValidator do
   @moduledoc """
   See README https://github.com/dylan-chong/ex_constructor_validator
+
+  # TODO customisable new/put names
+  # TODO publish in hex
   """
 
   def ex_constructor_new_name, do: :__new__
+
+  def call_hook(caller_module, method, method_args) do
+    caller_functions = caller_module.__info__(:functions)
+
+    module = if Keyword.has_key?(caller_functions, method) do
+      caller_module
+    else
+      ExConstructorValidator.DefaultHooks
+    end
+
+    apply(module, method, method_args)
+  end
+
+  def ex_constructor_lib_args(options) do
+    use_option = Keyword.fetch!(options, :use_ex_constructor_library)
+
+    if use_option do
+      default_options = [name: ex_constructor_new_name()]
+
+      if is_list(use_option) do
+        Keyword.merge(default_options, use_option)
+      else
+        default_options
+      end
+    else
+      nil
+    end
+  end
 
   defmacro __using__(options) do
     options = Keyword.merge([
       # call validate_struct callback?
       validate_struct: true,
       # use library https://github.com/appcues/exconstructor
-      use_ex_constructor_library: false,
+      use_ex_constructor_library: false, # boolean, or kw list
     ], options)
 
+    lib_args = ex_constructor_lib_args(options)
+
     quote do
-      if unquote(Keyword.fetch!(options, :use_ex_constructor_library)) do
-        use ExConstructor, name: unquote(ex_constructor_new_name())
+      if unquote(lib_args) do
+        use ExConstructor, unquote(lib_args)
       end
 
       def new(args, override_options \\ []) when is_list(override_options) do
@@ -72,21 +105,5 @@ defmodule ExConstructorValidator do
       end
     end
 
-    # TODO typespecs
-    # TODO customisable args for ex_constructor lib
-    # TODO customisable new/put names
-    # TODO publish in hex
-  end
-
-  def call_hook(caller_module, method, method_args) do
-    caller_functions = caller_module.__info__(:functions)
-
-    module = if Keyword.has_key?(caller_functions, method) do
-      caller_module
-    else
-      ExConstructorValidator.DefaultHooks
-    end
-
-    apply(module, method, method_args)
   end
 end

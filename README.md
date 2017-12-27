@@ -133,6 +133,19 @@ end
 
 (do not put `use ExConstructor`).
 
+Or if you want to pass args to `ExConstructor`:
+
+```
+defmodule PointNoValidation do
+  @enforce_keys [:x, :y]
+  defstruct [:x, :y, :z]
+
+  use ExConstructorValidator, use_ex_constructor_library: [
+    # args for ExConstructor here
+  ]
+end
+```
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
