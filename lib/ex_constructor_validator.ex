@@ -26,7 +26,8 @@ defmodule ExConstructorValidator do
           if validated_struct == nil do
             # To prevent accidental mistakes
             raise ExConstructorValidator.InvalidHookError,
-              "validate_struct cannot return nil"
+              "validate_struct cannot return nil. "
+              <> "Return the struct instead (if validation passed)."
           end
 
           validated_struct

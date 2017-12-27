@@ -1,16 +1,12 @@
 # ExConstructorValidator
 
-A personal exercise with macros (basically pretending that `Kernel.struct!/2`
-doesn't exist).
+Reduces code duplication by adding some boilerplate struct methods to your
+module.
 
-Allows:
-- Custom validation of the `YourModule.new/2` args, which `%YourModule{args}`
-does not allow
-- Raising errors when invalid key is passed as args
-- Raising errors when an `@enforce_keys` key is passed to `YourModule.new/2`
-- named-parameters in `YourModule.new/2`
+### The 'Problem'
 
-### The Problem
+If you want to write some validation for your struct, you need to write the
+`new` and `put` methods.
 
 ```elixir
 defmodule Point do
@@ -20,66 +16,98 @@ defmodule Point do
   def new(args) do
     args = Keyword.new(args)
 
-    if args[:x] < 0, do: raise ArgumentError
-    if args[:y] < 0, do: raise ArgumentError
-    if args[:z] < 0, do: raise ArgumentError
+    __MODULE__
+    |> Kernel.struct!(args)
+    |> validate_struct()
+  end
 
-    struct(__MODULE__, args)
+  def put(struct, args) do
+    args = Keyword.new(args)
+
+    struct
+    |> Kernel.struct!(args)
+    |> validate_struct()
+  end
+
+  def validate_struct(struct) do
+    if struct.x < 0 or struct.y < 0 or struct.z < 0 do
+      raise ArgumentError
+    end
+
+    struct
   end
 end
-
-test "boring example" do
-  # PASS. Raises ArgumentError, as it should
-  assert_raise ArgumentError,
-      fn -> Point.new(x: -1, y: 2) end
-  # PASS. Creates new point successfully, as it should
-  Point.new(x: 1, y: 2)
-
-  # FAIL! Creates new Point, but it should not! (See Point.@enforce_keys)
-  assert_raise ArgumentError,
-      fn -> Point.new(x: 1) end
-  # FAIL! Creates a Point, but :invalid is not a valid key!
-  assert_raise ArgumentError,
-      fn -> Point.new(x: 1, invalid: 1) end
-  # FAIL! Creates a Point, but x < 0 !
-  assert_raise ArgumentError,
-      fn -> %Point{x: -2, invalid: 1} end
-end
-
 ```
 
-### The solution
+And if you don't want to bother with validation yet, you might want to still
+add `new` and `put` methods to be consistent (or to make it easier to add
+validation later).
 
 ```elixir
-
-defmodule BetterPoint do
+defmodule PointNoValidation do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
-  use ExConstructorValidator # Add some (mild) magic!
+  def new(args) do
+    args = Keyword.new(args)
+
+    __MODULE__
+    |> Kernel.struct!(args)
+    |> validate_struct()
+  end
+
+  def put(struct, args) do
+    args = Keyword.new(args)
+
+    struct
+    |> Kernel.struct!(args)
+    |> validate_struct()
+  end
 
   def validate_struct(struct) do
-    if struct.x < 0, do: raise ArgumentError
-    if struct.y < 0, do: raise ArgumentError
-    if struct.z < 0, do: raise ArgumentError
+    struct
+  end
+end
+```
+
+And you have to write this boilerplate for every module you have! We only do
+that in Java! That can be a lot of duplication!
+
+### The Solution
+
+By the magic of Elixir macros, we can remove the duplication!
+
+```elixir
+defmodule Point do
+  @enforce_keys [:x, :y]
+  defstruct [:x, :y, :z]
+
+  use ExConstructorValidator # Adds `new` and `put` dynamically
+
+  def validate_struct(struct) do
+    if struct.x < 0 or struct.y < 0 or struct.z < 0 do
+      raise ArgumentError
+    end
+
     struct
   end
 end
 
-test "example using ExConstructorValidator" do
-  # PASS. raises ArgumentError, as it should
-  assert_raise ArgumentError,
-      fn -> BetterPoint.new(x: -1, y: 2) end
-  # PASS. creates new point successfully, as it should
-  BetterPoint.new(x: 1, y: 2)
+Point.new(x: 1, y: 2) # Still works!
+Point.new(x: -1, y: 2) # Fails validation, as expected
+```
 
-  # PASS! raises as it should
-  assert_raise ArgumentError,
-      fn -> BetterPoint.new(x: 1) end
-  # PASS! raises as it should
-  assert_raise ArgumentError,
-      fn -> BetterPoint.new(x: 1, invalid: 1) end
+And when we don't want validation...
+
+```elixir
+defmodule PointNoValidation do
+  @enforce_keys [:x, :y]
+  defstruct [:x, :y, :z]
+
+  use ExConstructorValidator # Adds `new` and `put` dynamically
 end
+
+Point.new(x: 1, y: 2) # Still works!
 ```
 
 ## Configuration

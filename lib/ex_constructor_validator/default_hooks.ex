@@ -8,10 +8,34 @@ defmodule ExConstructorValidator.DefaultHooks do
 
   @doc """
   Override to make struct a custom way.
-  The return value is the return value of YourModule.new/2.
   This function ignores validity.
 
   By default creates the struct with the given key/value pairs.
+  This is used in both `YourModule.new/2` and `YourModule.put/3`.
+
+  If you are using [exconstructor](https://github.com/appcues/exconstructor),
+  then overriding this method will be useful:
+
+  ```
+  defmodule Point do
+    @enforce_keys [:x, :y]
+    defstruct [:x, :y, :z]
+
+    use ExConstructor, name: :__new__
+    use ExConstructorValidator # Adds `new` and `put` dynamically
+
+    def create_struct(args, _) do
+      __new__(args)
+    end
+
+    def validate_struct(struct) do
+      if struct.x < 0 or struct.y < 0 or struct.z < 0 do
+        raise ArgumentError
+      end
+
+      struct
+    end
+  end
   """
   def create_struct(args, module) do
     Kernel.struct!(module, args)

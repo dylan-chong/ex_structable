@@ -102,7 +102,7 @@ defmodule ExConstructorValidatorTest do
     test "fails if returns nil" do
       assert_raise(
         ExConstructorValidator.InvalidHookError,
-        "validate_struct cannot return nil",
+        ~r"validate_struct cannot return nil.*",
         fn -> GStruct.new(g: -1) end
       )
     end
