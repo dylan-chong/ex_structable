@@ -4,7 +4,7 @@ defmodule ExStructable do
 
   Example usage:
 
-  ```elixir
+  ```
   defmodule Point do
     @enforce_keys [:x, :y]
     defstruct [:x, :y, :z]
@@ -20,19 +20,38 @@ defmodule ExStructable do
       struct
     end
   end
+  ```
 
+  These methods are added to the `Point` module:
+
+  ```
+  def new(args, override_options \\\\ []) # ...
+  def put(struct = %_{}, args, override_options \\\\ []) # ...
+  ```
+
+  So you can do things like this:
+
+  ```
   Point.new(x: 1, y: 2)
   # => %Point{x: 1, y: 2, z: nil}
+
   Point.new(x: -1, y: 2)
+  # ArgumentError: Fails validation, as expected
+
+  Point.new(x: 1, y: 2) |> Point.put(x: 3)
+  # => %Point{x: 3, y: 2, z: nil}
+
+  Point.new(x: 1, y: 2) |> Point.put(x: -1)
   # ArgumentError: Fails validation, as expected
   ```
 
-  See [README](https://github.com/dylan-chong/ex_structable) for more
-  instructions.
+  For more optional hooks like `validate_struct/2` (see
+  `ExStructable.DefaultHooks`).
+
+  See [README](https://github.com/dylan-chong/ex_structable) for more info.
   """
 
   # TODO customisable new/put names
-  # TODO publish in hex
 
   @doc false
   def ex_constructor_new_name, do: :__new__

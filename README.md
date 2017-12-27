@@ -2,10 +2,26 @@
 
 <!-- If this is changed, update mix.exs.description/1 -->
 
-Customisable library that reduces struct method boilerplate duplication.
-module. Allows you validate your structs when they are created or updated.
+Customisable library that reduces boilerplate to do with struct creation.
+Allows you validate your structs when they are created and updated.
 
-### The Problem
+Hex docs can be found
+[here](https://hexdocs.pm/ex_structable/ExStructable.html).
+
+## Installation
+
+The package can be installed by adding `ex_structable` to your list of
+dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:ex_structable, "~> 0.1.0"},
+  ]
+end
+```
+
+## The Problem
 
 If you want to write some validation for your struct, you need to write the
 boilerplate `new` and `put` methods manually.
@@ -39,6 +55,11 @@ defmodule Point do
     struct
   end
 end
+
+Point.new(x: 1, y: 2)
+# => %Point{x: 1, y: 2, z: nil}
+Point.new(x: -1, y: 2)
+# Fails validation, as expected
 ```
 
 And if you don't want to bother with validation yet, you might want to still
@@ -70,12 +91,15 @@ defmodule PointNoValidation do
     struct
   end
 end
+
+PointNoValidation.new(x: 1, y: 2)
+# => %PointNoValidation{x: 1, y: 2, z: nil} # Still works!
 ```
 
 And you have to write this boilerplate for every module you have! That can be a
 lot of duplication!
 
-### The Solution
+## The Solution
 
 By the magic of Elixir macros, we can remove the duplication!
 
@@ -111,8 +135,8 @@ defmodule PointNoValidation do
   use ExStructable # Adds `new` and `put` dynamically
 end
 
-Point.new(x: 1, y: 2)
-# => %Point{x: 1, y: 2, z: nil} # Still works!
+PointNoValidation.new(x: 1, y: 2)
+# => %PointNoValidation{x: 1, y: 2, z: nil} # Still works!
 ```
 
 ## Configuration
@@ -133,39 +157,32 @@ implement.](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_stru
 You can use [appcues/ExConstructor](https://github.com/appcues/exconstructor)
 at the same time using:
 
-```
+```elixir
 defmodule PointNoValidation do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
   use ExStructable, use_ex_constructor_library: true
 end
+
+Point.new(x: 1, y: 2)
+# => %Point{x: 1, y: 2, z: nil}
+
+Point.new(%{x: 1, y: 2})
+# => %Point{x: 1, y: 2, z: nil}
 ```
 
 (do not put `use ExConstructor`).
 
 Or if you want to pass args to `ExConstructor`:
 
-```
+```elixir
 defmodule PointNoValidation do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
   use ExStructable, use_ex_constructor_library: [
     # args for ExConstructor here
-  ]
-end
-```
-
-## Installation
-
-The package can be installed by adding `ex_structable` to your list of
-dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:ex_structable, "~> 0.1.0"},
   ]
 end
 ```

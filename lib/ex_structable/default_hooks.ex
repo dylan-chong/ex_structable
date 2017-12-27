@@ -22,7 +22,7 @@ defmodule ExStructable.DefaultHooks do
   end
 
   @doc """
-  Override to throw or return a custom error value such as `{:error, struct}`.
+  Override to raise or return a custom error value such as `{:error, struct}`.
 
   The return value is the return value of YourModule.new/2.
 
@@ -34,8 +34,7 @@ defmodule ExStructable.DefaultHooks do
     struct
   end
   ```
-  because it throws a FunctionClauseError when the guard isn't
-  matched.
+  because it raises a FunctionClauseError when the guard isn't matched.
   """
   def validate_struct(struct, options) do
     struct
