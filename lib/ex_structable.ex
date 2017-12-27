@@ -1,13 +1,43 @@
 defmodule ExStructable do
   @moduledoc """
-  See README https://github.com/dylan-chong/ex_structable
+  The `use`-able module.
+
+  Example usage:
+
+  ```elixir
+  defmodule Point do
+    @enforce_keys [:x, :y]
+    defstruct [:x, :y, :z]
+
+    use ExStructable # Adds `new` and `put` dynamically
+
+    # Optional hook
+    def validate_struct(struct) do
+      if struct.x < 0 or struct.y < 0 or struct.z < 0 do
+        raise ArgumentError
+      end
+
+      struct
+    end
+  end
+
+  Point.new(x: 1, y: 2)
+  # => %Point{x: 1, y: 2, z: nil}
+  Point.new(x: -1, y: 2)
+  # ArgumentError: Fails validation, as expected
+  ```
+
+  See [README](https://github.com/dylan-chong/ex_structable) for more
+  instructions.
+  """
 
   # TODO customisable new/put names
   # TODO publish in hex
-  """
 
+  @doc false
   def ex_constructor_new_name, do: :__new__
 
+  @doc false
   def call_hook(caller_module, method, method_args) do
     caller_functions = caller_module.__info__(:functions)
 
@@ -20,6 +50,7 @@ defmodule ExStructable do
     apply(module, method, method_args)
   end
 
+  @doc false
   def ex_constructor_lib_args(options) do
     use_option = Keyword.fetch!(options, :use_ex_constructor_library)
 

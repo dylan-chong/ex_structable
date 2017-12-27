@@ -5,7 +5,7 @@
 Customisable library that reduces struct method boilerplate duplication.
 module. Allows you validate your structs when they are created or updated.
 
-### The 'Problem'
+### The Problem
 
 If you want to write some validation for your struct, you need to write the
 boilerplate `new` and `put` methods manually.
@@ -72,8 +72,8 @@ defmodule PointNoValidation do
 end
 ```
 
-And you have to write this boilerplate for every module you have! We only do
-that in Java! That can be a lot of duplication!
+And you have to write this boilerplate for every module you have! That can be a
+lot of duplication!
 
 ### The Solution
 
@@ -117,9 +117,18 @@ Point.new(x: 1, y: 2)
 
 ## Configuration
 
+### __using__ arguments
+
 The `use` has optional arguments. See the [top of
 `ExStructable.__using__/1` to see all their default
-values](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable.ex#L7).
+values](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable.ex#L43).
+
+### Customisable Hooks
+
+[See this file to see what looks you can
+implement.](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable/default_hooks.ex).
+
+### ExConstructor Support
 
 You can use [appcues/ExConstructor](https://github.com/appcues/exconstructor)
 at the same time using:
@@ -156,7 +165,7 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_structable, "~> 0.1.0"}
+    {:ex_structable, "~> 0.1.0"},
   ]
 end
 ```
