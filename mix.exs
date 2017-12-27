@@ -30,11 +30,15 @@ defmodule ExConstructorValidator.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # Code deps
+      {:exconstructor, "~> 1.1.0"},
+
+      # Project deps
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.11", only: :dev},
       {:excoveralls, "~> 0.8", only: :test},
-      {:exconstructor, "~> 1.1.0"},
+      {:rename, "~> 0.1"}
     ]
   end
 
