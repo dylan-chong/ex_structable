@@ -6,6 +6,8 @@ defmodule ExConstructorValidator.Mixfile do
       app: :ex_constructor_validator,
       version: "0.1.0",
       elixir: "~> 1.5",
+      package: package(),
+      description: description(),
       start_permanent: Mix.env == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -32,7 +34,20 @@ defmodule ExConstructorValidator.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.11", only: :dev},
       {:excoveralls, "~> 0.8", only: :test},
-      {:exconstructor, "~> 1.1.0"}
+      {:exconstructor, "~> 1.1.0"},
     ]
+  end
+
+  defp package do
+    [
+      licenses: ["Apache 2.0"],
+      maintainers: ["Dylan Chong"],
+      links: %{"GitHub" => "https://github.com/dylan-chong/ex_constructor_validator"},
+    ]
+  end
+
+  defp description do
+    "Reduces code duplication by adding some boilerplate struct methods"
+    <> "to your module."
   end
 end
