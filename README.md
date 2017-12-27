@@ -1,4 +1,4 @@
-# ExConstructorValidator
+# ExStructable
 
 Reduces code duplication by adding some boilerplate struct methods to your
 module.
@@ -82,7 +82,7 @@ defmodule Point do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
-  use ExConstructorValidator # Adds `new` and `put` dynamically
+  use ExStructable # Adds `new` and `put` dynamically
 
   def validate_struct(struct) do
     if struct.x < 0 or struct.y < 0 or struct.z < 0 do
@@ -106,7 +106,7 @@ defmodule PointNoValidation do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
-  use ExConstructorValidator # Adds `new` and `put` dynamically
+  use ExStructable # Adds `new` and `put` dynamically
 end
 
 Point.new(x: 1, y: 2)
@@ -116,8 +116,8 @@ Point.new(x: 1, y: 2)
 ## Configuration
 
 The `use` has optional arguments. See the [top of
-`ExConstructorValidator.__using__/1` to see all their default
-values](https://github.com/dylan-chong/ex_constructor_validator/blob/master/lib/ex_constructor_validator.ex#L7).
+`ExStructable.__using__/1` to see all their default
+values](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable.ex#L7).
 
 You can use [appcues/ExConstructor](https://github.com/appcues/exconstructor)
 at the same time using:
@@ -127,7 +127,7 @@ defmodule PointNoValidation do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
-  use ExConstructorValidator, use_ex_constructor_library: true
+  use ExStructable, use_ex_constructor_library: true
 end
 ```
 
@@ -140,7 +140,7 @@ defmodule PointNoValidation do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
-  use ExConstructorValidator, use_ex_constructor_library: [
+  use ExStructable, use_ex_constructor_library: [
     # args for ExConstructor here
   ]
 end
@@ -149,17 +149,17 @@ end
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ex_constructor_validator` to your list of dependencies in `mix.exs`:
+by adding `ex_structable` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:ex_constructor_validator, "~> 0.1.0"}
+    {:ex_structable, "~> 0.1.0"}
   ]
 end
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/ex_constructor_validator](https://hexdocs.pm/ex_constructor_validator).
+be found at [https://hexdocs.pm/ex_structable](https://hexdocs.pm/ex_structable).
 

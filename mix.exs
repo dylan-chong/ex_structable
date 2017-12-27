@@ -1,9 +1,9 @@
-defmodule ExConstructorValidator.Mixfile do
+defmodule ExStructable.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :ex_constructor_validator,
+      app: :ex_structable,
       version: "0.1.0",
       elixir: "~> 1.5",
       package: package(),
@@ -46,7 +46,7 @@ defmodule ExConstructorValidator.Mixfile do
     [
       licenses: ["Apache 2.0"],
       maintainers: ["Dylan Chong"],
-      links: %{"GitHub" => "https://github.com/dylan-chong/ex_constructor_validator"},
+      links: %{"GitHub" => "https://github.com/dylan-chong/ex_structable"},
     ]
   end
 

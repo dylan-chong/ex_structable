@@ -1,21 +1,21 @@
-defmodule ExConstructorValidatorTest do
+defmodule ExStructableTest do
   use ExUnit.Case
-  doctest ExConstructorValidator
+  doctest ExStructable
 
   defmodule ABCStruct do
     @enforce_keys [:a]
     defstruct [:a, b: [2], c: 3]
-    use ExConstructorValidator
+    use ExStructable
   end
 
   defmodule DEStruct do
     defstruct [:d, :e]
-    use ExConstructorValidator
+    use ExStructable
   end
 
   defmodule FStruct do
     defstruct [:f]
-    use ExConstructorValidator
+    use ExStructable
 
     def validate_struct(struct = %FStruct{f: f}, _) do
       if f < 0 do
@@ -28,14 +28,14 @@ defmodule ExConstructorValidatorTest do
 
   defmodule GStruct do
     defstruct [:g]
-    use ExConstructorValidator
+    use ExStructable
 
     def validate_struct(_, _), do: nil
   end
 
   defmodule HStruct do
     defstruct [:h]
-    use ExConstructorValidator
+    use ExStructable
 
     def validate_struct(struct, _) do
       if struct.h < 0, do: raise ArgumentError
@@ -53,12 +53,12 @@ defmodule ExConstructorValidatorTest do
 
   defmodule IStruct do
     defstruct [:the_field]
-    use ExConstructorValidator, use_ex_constructor_library: true
+    use ExStructable, use_ex_constructor_library: true
   end
 
   defmodule JStruct do
     defstruct [:the_field]
-    use ExConstructorValidator, use_ex_constructor_library: [
+    use ExStructable, use_ex_constructor_library: [
       camelcase: false
     ]
   end
@@ -66,7 +66,7 @@ defmodule ExConstructorValidatorTest do
   defmodule Point do
     defstruct [:x, :y, :z]
 
-    use ExConstructorValidator, use_ex_constructor_library: true
+    use ExStructable, use_ex_constructor_library: true
 
     def validate_struct(struct, _) do
       if struct.x < 0 or struct.y < 0 or struct.z < 0 do
@@ -130,7 +130,7 @@ defmodule ExConstructorValidatorTest do
 
     test "fails if returns nil" do
       assert_raise(
-        ExConstructorValidator.InvalidHookError,
+        ExStructable.InvalidHookError,
         ~r"validate_struct cannot return nil.*",
         fn -> GStruct.new(g: -1) end
       )

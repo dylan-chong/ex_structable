@@ -1,6 +1,6 @@
-defmodule ExConstructorValidator do
+defmodule ExStructable do
   @moduledoc """
-  See README https://github.com/dylan-chong/ex_constructor_validator
+  See README https://github.com/dylan-chong/ex_structable
 
   # TODO customisable new/put names
   # TODO publish in hex
@@ -14,7 +14,7 @@ defmodule ExConstructorValidator do
     module = if Keyword.has_key?(caller_functions, method) do
       caller_module
     else
-      ExConstructorValidator.DefaultHooks
+      ExStructable.DefaultHooks
     end
 
     apply(module, method, method_args)
@@ -55,7 +55,7 @@ defmodule ExConstructorValidator do
         merged_options =
           Keyword.merge(unquote(options), override_options)
         opt = &Keyword.fetch!(merged_options, &1)
-        call_hook = &ExConstructorValidator.call_hook(__MODULE__, &1, &2)
+        call_hook = &ExStructable.call_hook(__MODULE__, &1, &2)
 
         struct = call_hook.(:create_struct, [
           args, __MODULE__, merged_options
@@ -68,7 +68,7 @@ defmodule ExConstructorValidator do
 
           if validated_struct == nil do
             # To prevent accidental mistakes
-            raise ExConstructorValidator.InvalidHookError,
+            raise ExStructable.InvalidHookError,
               "validate_struct cannot return nil. "
               <> "Return the struct instead (if validation passed)."
           end

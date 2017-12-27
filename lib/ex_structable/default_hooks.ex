@@ -1,8 +1,8 @@
-defmodule ExConstructorValidator.DefaultHooks do
+defmodule ExStructable.DefaultHooks do
   @moduledoc """
   Default hook implementations.
 
-  Implement methods below in the module with `use ExConstructorValidator`
+  Implement methods below in the module with `use ExStructable`
   to override behaviour.
   """
 
@@ -15,7 +15,7 @@ defmodule ExConstructorValidator.DefaultHooks do
   """
   def create_struct(args, module, options) do
     if Keyword.fetch!(options, :use_ex_constructor_library) do
-      apply(module, ExConstructorValidator.ex_constructor_new_name(), [args])
+      apply(module, ExStructable.ex_constructor_new_name(), [args])
     else
       Kernel.struct!(module, args)
     end
