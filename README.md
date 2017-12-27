@@ -6,7 +6,7 @@ module.
 ### The 'Problem'
 
 If you want to write some validation for your struct, you need to write the
-`new` and `put` methods.
+boilerplate `new` and `put` methods manually.
 
 ```elixir
 defmodule Point do
@@ -93,8 +93,10 @@ defmodule Point do
   end
 end
 
-Point.new(x: 1, y: 2) # Still works!
-Point.new(x: -1, y: 2) # Fails validation, as expected
+Point.new(x: 1, y: 2)
+# => %Point{x: 1, y: 2, z: nil} # Still works!
+Point.new(x: -1, y: 2)
+# Fails validation, as expected
 ```
 
 And when we don't want validation...
@@ -107,7 +109,8 @@ defmodule PointNoValidation do
   use ExConstructorValidator # Adds `new` and `put` dynamically
 end
 
-Point.new(x: 1, y: 2) # Still works!
+Point.new(x: 1, y: 2)
+# => %Point{x: 1, y: 2, z: nil} # Still works!
 ```
 
 ## Configuration
@@ -115,6 +118,20 @@ Point.new(x: 1, y: 2) # Still works!
 The `use` has optional arguments. See the [top of
 `ExConstructorValidator.__using__/1` to see all their default
 values](https://github.com/dylan-chong/ex_constructor_validator/blob/master/lib/ex_constructor_validator.ex#L7).
+
+You can use [appcues/ExConstructor](https://github.com/appcues/exconstructor)
+at the same time using:
+
+```
+defmodule PointNoValidation do
+  @enforce_keys [:x, :y]
+  defstruct [:x, :y, :z]
+
+  use ExConstructorValidator, use_ex_constructor_library: true
+end
+```
+
+(do not put `use ExConstructor`).
 
 ## Installation
 

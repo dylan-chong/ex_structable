@@ -12,28 +12,6 @@ defmodule ExConstructorValidator.DefaultHooks do
 
   By default creates the struct with the given key/value pairs.
   This is used in both `YourModule.new/2` and `YourModule.put/3`.
-
-  If you are using [ExConstructor](https://github.com/appcues/exconstructor),
-  then overriding this method will be useful:
-  ```
-  defmodule Point do
-    @enforce_keys [:x, :y]
-    defstruct [:x, :y, :z]
-
-    use ExConstructorValidator
-
-    def create_struct(args, _) do
-      __new__(args)
-    end
-
-    def validate_struct(struct) do
-      if struct.x < 0 or struct.y < 0 or struct.z < 0 do
-        raise ArgumentError
-      end
-
-      struct
-    end
-  end
   """
   def create_struct(args, module, options) do
     if Keyword.fetch!(options, :use_ex_constructor_library) do
