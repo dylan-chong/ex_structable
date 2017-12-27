@@ -1,7 +1,9 @@
 # ExStructable
 
-Reduces code duplication by adding some boilerplate struct methods to your
-module.
+<!-- If this is changed, update mix.exs.description/1 -->
+
+Customisable library that reduces struct method boilerplate duplication.
+module. Allows you validate your structs when they are created or updated.
 
 ### The 'Problem'
 

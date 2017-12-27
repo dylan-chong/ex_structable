@@ -51,7 +51,7 @@ defmodule ExStructable.Mixfile do
   end
 
   defp description do
-    "Reduces code duplication by adding some boilerplate struct methods"
-    <> "to your module."
+    # If this is changed, update README
+    "Customisable library that reduces struct method boilerplate duplication. module. Allows you validate your structs when they are created or updated."
   end
 end
