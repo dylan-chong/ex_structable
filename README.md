@@ -2,11 +2,11 @@
 
 <!-- If this is changed, update mix.exs.description/1 -->
 
-Customisable library that reduces boilerplate to do with struct creation.
+Reduce boilerplate by generating struct `new` and `put` functions.
 Allows you validate your structs when they are created and updated.
 
 Hex docs can be found
-[here](https://hexdocs.pm/ex_structable/ExStructable.html).
+[here](https://hexdocs.pm/ex_structable/api-reference.html).
 
 ## Installation
 
@@ -99,9 +99,9 @@ PointNoValidation.new(x: 1, y: 2)
 And you have to write this boilerplate for every module you have! That can be a
 lot of duplication!
 
-## The Solution
+## A Solution
 
-By the magic of Elixir macros, we can remove the duplication!
+By the magic of Elixir macros, we can remove the boilerplate/duplication!
 
 ```elixir
 defmodule Point do
@@ -149,8 +149,8 @@ values](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structab
 
 ### Customisable Hooks
 
-[See this file to see what looks you can
-implement.](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable/default_hooks.ex).
+[See this file to see what hooks you can
+implement](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable/default_hooks.ex).
 
 ### ExConstructor Support
 
@@ -159,7 +159,6 @@ at the same time using:
 
 ```elixir
 defmodule PointNoValidation do
-  @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
   use ExStructable, use_ex_constructor_library: true
@@ -178,7 +177,6 @@ Or if you want to pass args to `ExConstructor`:
 
 ```elixir
 defmodule PointNoValidation do
-  @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
   use ExStructable, use_ex_constructor_library: [

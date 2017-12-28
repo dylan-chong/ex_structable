@@ -36,7 +36,7 @@ defmodule ExStructable.DefaultHooks do
   ```
   because it raises a FunctionClauseError when the guard isn't matched.
   """
-  def validate_struct(struct, options) do
+  def validate_struct(struct, _options) do
     struct
   end
 
@@ -46,7 +46,7 @@ defmodule ExStructable.DefaultHooks do
 
   Override to add custom functionality.
   """
-  def on_successful_new(struct, options) do
+  def on_successful_new(_struct, _options) do
     # Stub
   end
 
@@ -56,7 +56,7 @@ defmodule ExStructable.DefaultHooks do
 
   Override to add custom functionality.
   """
-  def on_successful_put(struct, options) do
+  def on_successful_put(_struct, _options) do
     # Stub
   end
 
