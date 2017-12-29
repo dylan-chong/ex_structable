@@ -258,7 +258,18 @@ defmodule ExStructableTest do
       assert expected == JStruct.new(theField: 1)
     end
 
-    # TODO put with camel case
+    test "put with camel case overrides existing field" do
+      expected = %IStruct{the_field: 1}
+      assert expected == IStruct.put(%IStruct{the_field: 0}, theField: 1)
+    end
+
+    test "put with camel case fails if invalid value" do
+      assert_raise(
+        ArgumentError,
+        "invalid param",
+        fn -> KStruct.put(%KStruct{k: 0}, k: -1) end
+      )
+    end
   end
 
 end

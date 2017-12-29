@@ -51,6 +51,7 @@ defmodule ExStructable do
   See [README](#{ExStructable.Mixfile.github_url()}) for more info.
   """
 
+  # TODO impl hooks
   # TODO customisable new/put names
 
   @doc false
