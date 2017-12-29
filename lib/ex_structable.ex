@@ -48,7 +48,7 @@ defmodule ExStructable do
   For more optional hooks like `validate_struct/2` (see
   `ExStructable.DefaultHooks`).
 
-  See [README](https://github.com/dylan-chong/ex_structable) for more info.
+  See [README](#{ExStructable.Mixfile.github_url()}) for more info.
   """
 
   # TODO customisable new/put names
@@ -86,6 +86,26 @@ defmodule ExStructable do
     end
   end
 
+  @doc false
+  def finish_creating(struct, merged_options, module) do
+    if Keyword.fetch!(merged_options, :validate_struct) do
+      validated_struct = call_hook(module, :validate_struct, [
+        struct, merged_options
+      ])
+
+      if validated_struct == nil do
+        # To prevent accidental mistakes
+        raise ExStructable.InvalidHookError,
+        "validate_struct cannot return nil. "
+        <> "Return the struct instead (if validation passed)."
+      end
+
+      validated_struct
+    else
+      struct
+    end
+  end
+
   defmacro __using__(options) do
     options = Keyword.merge([
       # call validate_struct callback?
@@ -102,56 +122,39 @@ defmodule ExStructable do
       end
 
       def new(args, override_options \\ []) when is_list(override_options) do
-        merged_options =
-          Keyword.merge(unquote(options), override_options)
-        opt = &Keyword.fetch!(merged_options, &1)
+        merged_options = Keyword.merge(unquote(options), override_options)
         call_hook = &ExStructable.call_hook(__MODULE__, &1, &2)
 
         struct = call_hook.(:create_struct, [
           args, __MODULE__, merged_options
         ])
 
-        result = if opt.(:validate_struct) do
-          validated_struct = call_hook.(:validate_struct, [
-            struct, merged_options
-          ])
+        finish = unquote(&ExStructable.finish_creating/3)
+        result = finish.(struct, merged_options, __MODULE__)
 
-          if validated_struct == nil do
-            # To prevent accidental mistakes
-            raise ExStructable.InvalidHookError,
-              "validate_struct cannot return nil. "
-              <> "Return the struct instead (if validation passed)."
-          end
-
-          validated_struct
-        else
-          struct
-        end
-
-        call_hook.(
-          merged_options[:on_success] || :on_successful_new,
-          [result, merged_options]
-        )
+        call_hook.(:after_new, [result, merged_options])
         result
       end
 
       def put(struct = %_{}, args, override_options \\ [])
       when is_list(override_options) do
-        # TODO accept struct being a map or kw list? (create overload)
         unless struct.__struct__ == __MODULE__ do
           raise ArgumentError,
             "#{inspect(struct)} struct is not a %#{__MODULE__}{}"
         end
 
-        struct
-        |> Map.from_struct
-        |> Keyword.new
-        |> Keyword.merge(args)
-        |> new(Keyword.put(
-          override_options,
-          :on_success,
-          :on_successful_put
-        ))
+        merged_options = Keyword.merge(unquote(options), override_options)
+        call_hook = &ExStructable.call_hook(__MODULE__, &1, &2)
+
+        new_struct = call_hook.(:put_into_struct, [
+          args, struct, merged_options
+        ])
+
+        finish = unquote(&ExStructable.finish_creating/3)
+        result = finish.(new_struct, merged_options, __MODULE__)
+
+        call_hook.(:after_put, [result, merged_options])
+        result
       end
     end
 

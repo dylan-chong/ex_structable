@@ -1,8 +1,6 @@
 defmodule ExStructable.Mixfile do
   use Mix.Project
 
-  @github_url "https://github.com/dylan-chong/ex_structable"
-
   def project do
     [
       app: :ex_structable,
@@ -19,8 +17,8 @@ defmodule ExStructable.Mixfile do
         "coveralls.post": :test,
         "coveralls.html": :test,
       ],
-      source_url: @github_url,
-      homepage_url: @github_url,
+      source_url: github_url(),
+      homepage_url: github_url(),
     ]
   end
 
@@ -30,6 +28,8 @@ defmodule ExStructable.Mixfile do
       extra_applications: [:logger]
     ]
   end
+
+  def github_url, do: "https://github.com/dylan-chong/ex_structable"
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
@@ -50,7 +50,7 @@ defmodule ExStructable.Mixfile do
     [
       licenses: ["Apache 2.0"],
       maintainers: ["Dylan Chong"],
-      links: %{"GitHub" => @github_url},
+      links: %{"GitHub" => github_url()},
     ]
   end
 

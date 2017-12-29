@@ -38,16 +38,16 @@ defmodule ExStructableTest do
     use ExStructable
 
     def validate_struct(struct, _) do
-      if struct.h < 0, do: raise ArgumentError
+      if struct.h < 0, do: raise ArgumentError, "Invalid struct"
       struct
     end
 
-    def on_successful_new(_, _) do
-      raise RuntimeError, "on_successful_new called"
+    def after_new(_, _) do
+      raise RuntimeError, "after_new called"
     end
 
-    def on_successful_put(_, _) do
-      raise RuntimeError, "on_successful_put called"
+    def after_put(_, _) do
+      raise RuntimeError, "after_put called"
     end
   end
 
@@ -61,6 +61,19 @@ defmodule ExStructableTest do
     use ExStructable, use_ex_constructor_library: [
       camelcase: false
     ]
+  end
+
+  defmodule KStruct do
+    defstruct [:k, :l]
+    use ExStructable
+
+    def validate_struct(struct = %KStruct{k: k}, _) do
+      if k < 0 do
+        raise ArgumentError, "invalid param"
+      end
+
+      struct
+    end
   end
 
   defmodule Point do
@@ -168,16 +181,24 @@ defmodule ExStructableTest do
     end
 
     test "updates data successfully" do
-      expected = %FStruct{f: 1}
-      assert expected == FStruct.put(%FStruct{f: 2}, [f: 1])
+      expected = %KStruct{k: 1, l: 2}
+      assert expected == KStruct.put(%KStruct{k: 2, l: 2}, [k: 1])
+    end
+
+    test "fails with invalid key" do
+      f = %FStruct{f: 2}
+      assert_raise(
+        KeyError,
+        fn -> FStruct.put(f, [invalid_key: 1]) end
+      )
     end
   end
 
-  describe "on_successful_new" do
+  describe "after_new" do
     test "is called after new" do
       assert_raise(
         RuntimeError,
-        "on_successful_new called",
+        "after_new called",
         fn -> HStruct.new(h: 1) end
       )
     end
@@ -190,11 +211,11 @@ defmodule ExStructableTest do
     end
   end
 
-  describe "on_successful_put" do
+  describe "after_put" do
     test "is called after put" do
       assert_raise(
         RuntimeError,
-        "on_successful_put called",
+        "after_put called",
         fn -> HStruct.put(%HStruct{h: 1}, [h: 2]) end
       )
     end
@@ -218,6 +239,15 @@ defmodule ExStructableTest do
       assert expected == Point.new(%{x: 1, y: 2})
     end
 
+    test "put adds from Map" do
+      expected = %Point{x: 3, y: 2, z: nil}
+      result =
+        %{x: 1, y: 2}
+        |> Point.new()
+        |> Point.put(%{x: 3})
+      assert expected == result
+    end
+
     test "new creates with camel case field with ex_constructor" do
       expected = %IStruct{the_field: 1}
       assert expected == IStruct.new(theField: 1)
@@ -227,6 +257,8 @@ defmodule ExStructableTest do
       expected = %JStruct{the_field: nil}
       assert expected == JStruct.new(theField: 1)
     end
+
+    # TODO put with camel case
   end
 
 end
