@@ -22,18 +22,20 @@ defmodule ExStructable.DefaultHooks do
   end
 
   @doc """
-  Override to put args into struct in a custom way.
+  Override to put args into struct in a custom way, and return new struct.
   This function ignores validity.
 
   By default puts the given key/value args into the given struct.
   This is used in `YourModule.put/3`.
   """
   def put_into_struct(args, struct, options) do
-    if Keyword.fetch!(options, :use_ex_constructor_library) do
-      # TODO fix camel case in args not overriding
-      apply(struct.__struct__, ExStructable.ex_constructor_new_name(), [
-        Map.merge(struct, args)
-      ])
+    lib_args = Keyword.fetch!(options, :use_ex_constructor_library)
+
+    if lib_args do
+      ExConstructor.populate_struct(struct, args, case lib_args do
+        true -> []
+        _ -> lib_args
+      end)
     else
       Kernel.struct!(struct, args)
     end

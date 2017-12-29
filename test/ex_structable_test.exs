@@ -76,6 +76,16 @@ defmodule ExStructableTest do
     end
   end
 
+  defmodule LStruct do
+    defstruct [:the_field]
+    use ExStructable, use_ex_constructor_library: true
+
+    def validate_struct(struct = %LStruct{the_field: f}, _) do
+      if f < 0, do: raise ArgumentError, "invalid param"
+      struct
+    end
+  end
+
   defmodule Point do
     defstruct [:x, :y, :z]
 
@@ -258,7 +268,18 @@ defmodule ExStructableTest do
       assert expected == JStruct.new(theField: 1)
     end
 
-    # TODO put with camel case
+    test "put with camel case overrides existing field" do
+      expected = %IStruct{the_field: 1}
+      assert expected == IStruct.put(%IStruct{the_field: 0}, theField: 1)
+    end
+
+    test "put with camel case fails if invalid value" do
+      assert_raise(
+        ArgumentError,
+        "invalid param",
+        fn -> LStruct.put(%LStruct{the_field: 0}, theField: -1) end
+      )
+    end
   end
 
 end

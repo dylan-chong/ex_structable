@@ -51,6 +51,7 @@ defmodule ExStructable do
   See [README](#{ExStructable.Mixfile.github_url()}) for more info.
   """
 
+  # TODO impl hooks
   # TODO customisable new/put names
 
   @doc false
@@ -121,7 +122,9 @@ defmodule ExStructable do
         use ExConstructor, unquote(lib_args)
       end
 
-      def new(args, override_options \\ []) when is_list(override_options) do
+      def new(args, override_options \\ [])
+      when (is_list(args) or is_map(args)) and is_list(override_options)
+      do
         merged_options = Keyword.merge(unquote(options), override_options)
         call_hook = &ExStructable.call_hook(__MODULE__, &1, &2)
 
@@ -137,7 +140,8 @@ defmodule ExStructable do
       end
 
       def put(struct = %_{}, args, override_options \\ [])
-      when is_list(override_options) do
+      when (is_list(args) or is_map(args)) and is_list(override_options)
+      do
         unless struct.__struct__ == __MODULE__ do
           raise ArgumentError,
             "#{inspect(struct)} struct is not a %#{__MODULE__}{}"
