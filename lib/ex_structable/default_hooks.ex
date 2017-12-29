@@ -10,7 +10,7 @@ defmodule ExStructable.DefaultHooks do
   Override to make struct a custom way.
   This function ignores validity.
 
-  By default creates the struct with the given key/value pairs.
+  By default creates the struct with the given key/value args.
   This is used in `YourModule.new/2`.
   """
   def create_struct(args, module, options) do
@@ -25,8 +25,8 @@ defmodule ExStructable.DefaultHooks do
   Override to put args into struct in a custom way.
   This function ignores validity.
 
-  By default creates the struct with the given key/value pairs.
-  This is used in YourModule.put/3`.
+  By default puts the given key/value args into the given struct.
+  This is used in `YourModule.put/3`.
   """
   def put_into_struct(args, struct, options) do
     if Keyword.fetch!(options, :use_ex_constructor_library) do
@@ -44,11 +44,11 @@ defmodule ExStructable.DefaultHooks do
 
   The return value is the return value of YourModule.new/2.
 
-  By default returns the given struct.
+  By default returns the given struct without any checking.
 
   You can even define a hook using guards such as:
   ```
-  def validate_struct(struct = %MyStruct{a: a}) when a > 0 do
+  def validate_struct(struct = %Line{length: length}) when length > 0 do
     struct
   end
   ```
