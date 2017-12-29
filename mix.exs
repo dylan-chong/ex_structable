@@ -4,7 +4,7 @@ defmodule ExStructable.Mixfile do
   def project do
     [
       app: :ex_structable,
-      version: "0.1.2",
+      version: "0.2.0",
       elixir: "~> 1.5",
       package: package(),
       description: description(),
@@ -56,7 +56,7 @@ defmodule ExStructable.Mixfile do
 
   defp description do
     # If this is changed, update README
-    "Simple library that reduces boilerplate to do with struct creation. "
+    "Reduce boilerplate by generating struct `new` and `put` functions."
     <> "Allows you validate your structs when they are created and updated."
   end
 end

@@ -1,7 +1,6 @@
 # ExStructable
 
 <!-- If this is changed, update mix.exs.description/1 -->
-
 Reduce boilerplate by generating struct `new` and `put` functions.
 Allows you validate your structs when they are created and updated.
 
