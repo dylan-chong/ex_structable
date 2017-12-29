@@ -42,7 +42,6 @@ defmodule ExStructable.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.11", only: :dev},
       {:excoveralls, "~> 0.8", only: :test},
-      {:rename, "~> 0.1", only: :dev},
     ]
   end
 
