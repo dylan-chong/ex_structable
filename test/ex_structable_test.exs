@@ -76,6 +76,16 @@ defmodule ExStructableTest do
     end
   end
 
+  defmodule LStruct do
+    defstruct [:the_field]
+    use ExStructable, use_ex_constructor_library: true
+
+    def validate_struct(struct = %LStruct{the_field: f}, _) do
+      if f < 0, do: raise ArgumentError, "invalid param"
+      struct
+    end
+  end
+
   defmodule Point do
     defstruct [:x, :y, :z]
 
@@ -267,7 +277,7 @@ defmodule ExStructableTest do
       assert_raise(
         ArgumentError,
         "invalid param",
-        fn -> KStruct.put(%KStruct{k: 0}, k: -1) end
+        fn -> LStruct.put(%LStruct{the_field: 0}, theField: -1) end
       )
     end
   end
