@@ -52,23 +52,23 @@ defmodule ExStructable do
   """
 
   # TODO impl hooks
+  # TODO Remove module argument in creat
+  # TODO Documentation comments on new and put methods
+  # TODO tyepsesc on new and put methods
   # TODO customisable new/put names
+
+  @typedoc "Key value pairs to put into the struct."
+  @type args :: keyword | map
+  @typedoc ""
+  @type options :: keyword
+  @typedoc """
+  Usually is a struct, may not be if validate_struct/2 is overriden and
+  implemented differently.
+  """
+  @type validation_result :: struct | any
 
   @doc false
   def ex_constructor_new_name, do: :__new__
-
-  @doc false
-  def call_hook(caller_module, method, method_args) do
-    caller_functions = caller_module.__info__(:functions)
-
-    module = if Keyword.has_key?(caller_functions, method) do
-      caller_module
-    else
-      ExStructable.DefaultHooks
-    end
-
-    apply(module, method, method_args)
-  end
 
   @doc false
   def ex_constructor_lib_args(options) do
@@ -90,9 +90,7 @@ defmodule ExStructable do
   @doc false
   def finish_creating(struct, merged_options, module) do
     if Keyword.fetch!(merged_options, :validate_struct) do
-      validated_struct = call_hook(module, :validate_struct, [
-        struct, merged_options
-      ])
+      validated_struct = module.validate_struct(struct, merged_options)
 
       if validated_struct == nil do
         # To prevent accidental mistakes
@@ -122,20 +120,19 @@ defmodule ExStructable do
         use ExConstructor, unquote(lib_args)
       end
 
+      @behaviour ExStructable.DefaultHooks
+
       def new(args, override_options \\ [])
       when (is_list(args) or is_map(args)) and is_list(override_options)
       do
         merged_options = Keyword.merge(unquote(options), override_options)
-        call_hook = &ExStructable.call_hook(__MODULE__, &1, &2)
 
-        struct = call_hook.(:create_struct, [
-          args, __MODULE__, merged_options
-        ])
+        struct = create_struct(args, __MODULE__, merged_options)
 
         finish = unquote(&ExStructable.finish_creating/3)
         result = finish.(struct, merged_options, __MODULE__)
 
-        call_hook.(:after_new, [result, merged_options])
+        after_new(result, merged_options)
         result
       end
 
@@ -148,18 +145,56 @@ defmodule ExStructable do
         end
 
         merged_options = Keyword.merge(unquote(options), override_options)
-        call_hook = &ExStructable.call_hook(__MODULE__, &1, &2)
 
-        new_struct = call_hook.(:put_into_struct, [
-          args, struct, merged_options
-        ])
+        new_struct = put_into_struct(args, struct, merged_options)
 
         finish = unquote(&ExStructable.finish_creating/3)
         result = finish.(new_struct, merged_options, __MODULE__)
 
-        call_hook.(:after_put, [result, merged_options])
+        after_put(result, merged_options)
         result
       end
+
+      # DefaultHooks implementations
+
+      def create_struct(args, module, options) do
+        if Keyword.fetch!(options, :use_ex_constructor_library) do
+          apply(module, ExStructable.ex_constructor_new_name(), [args])
+        else
+          Kernel.struct!(module, args)
+        end
+      end
+      defoverridable [create_struct: 3]
+
+      def put_into_struct(args, struct, options) do
+        lib_args = Keyword.fetch!(options, :use_ex_constructor_library)
+
+        if lib_args do
+          ExConstructor.populate_struct(struct, args, case lib_args do
+            true -> []
+            _ -> lib_args
+          end)
+          else
+            Kernel.struct!(struct, args)
+        end
+      end
+      defoverridable [put_into_struct: 3]
+
+      def validate_struct(struct, _options) do
+        struct
+      end
+      defoverridable [validate_struct: 2]
+
+      def after_new(_result, _options) do
+        # Stub
+      end
+      defoverridable [after_new: 2]
+
+      def after_put(_result, _options) do
+        # Stub
+      end
+      defoverridable [after_put: 2]
+
     end
 
   end

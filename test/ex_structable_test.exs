@@ -67,6 +67,7 @@ defmodule ExStructableTest do
     defstruct [:k, :l]
     use ExStructable
 
+    @impl ExStructable
     def validate_struct(struct = %KStruct{k: k}, _) do
       if k < 0 do
         raise ArgumentError, "invalid param"
