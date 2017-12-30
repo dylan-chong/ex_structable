@@ -46,7 +46,7 @@ defmodule ExStructable do
   ```
 
   For more optional hooks like `validate_struct/2` (see
-  `ExStructable.DefaultHooks`).
+  `ExStructable.Hooks`).
 
   See [README](#{ExStructable.Mixfile.github_url()}) for more info.
   """
@@ -120,7 +120,7 @@ defmodule ExStructable do
         use ExConstructor, unquote(lib_args)
       end
 
-      @behaviour ExStructable.DefaultHooks
+      @behaviour ExStructable.Hooks
 
       def new(args, override_options \\ [])
       when (is_list(args) or is_map(args)) and is_list(override_options)
@@ -155,7 +155,7 @@ defmodule ExStructable do
         result
       end
 
-      # DefaultHooks implementations
+      # ExStructable.Hooks default implementations:
 
       def create_struct(args, module, options) do
         if Keyword.fetch!(options, :use_ex_constructor_library) do

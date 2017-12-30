@@ -96,11 +96,11 @@ PointNoValidation.new(x: 1, y: 2)
 ```
 
 And you have to write this boilerplate for every module you have! That can be a
-lot of duplication!
+lot of boilerplate!
 
 ## A Solution
 
-By the magic of Elixir macros, we can remove the boilerplate/duplication!
+By the magic of Elixir macros, we can remove the boilerplate!
 
 ```elixir
 defmodule Point do

@@ -1,4 +1,4 @@
-defmodule ExStructable.DefaultHooks do
+defmodule ExStructable.Hooks do
   @moduledoc """
   Behaviour for default hook implementations.
 
