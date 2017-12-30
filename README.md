@@ -109,6 +109,7 @@ defmodule Point do
 
   use ExStructable # Adds `new` and `put` dynamically
 
+  @impl true
   def validate_struct(struct) do
     if struct.x < 0 or struct.y < 0 or struct.z < 0 do
       raise ArgumentError

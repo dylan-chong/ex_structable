@@ -4,6 +4,9 @@ defmodule ExStructable.Hooks do
 
   Implement methods below in the module with `use ExStructable`
   to override behaviour (default implementations are provided).
+
+  Be sure to use `@impl true` above the hook implementation to add compile-time
+  warnings about incorrect hook definitions.
   """
 
   @doc """
@@ -41,8 +44,9 @@ defmodule ExStructable.Hooks do
 
   You can even define a hook using guards such as:
   ```
+  @impl true
   def validate_struct(struct = %Line{length: length}) when length > 0 do
-  struct
+    struct
   end
   ```
   because it raises a FunctionClauseError when the guard isn't matched.

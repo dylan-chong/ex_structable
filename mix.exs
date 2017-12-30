@@ -40,8 +40,8 @@ defmodule ExStructable.Mixfile do
       # Project deps
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.11", only: :dev},
-      {:excoveralls, "~> 0.8", only: :test},
+      {:ex_doc, "~> 0.11", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.8", only: :test, runtime: false},
     ]
   end
 
