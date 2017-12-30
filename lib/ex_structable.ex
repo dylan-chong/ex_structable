@@ -2,67 +2,78 @@ defmodule ExStructable do
   @moduledoc """
   The `use`-able module.
 
+  These methods are added to the module that has `use ExStructable`:
+
+      def new(args, override_options \\\\ []) # ...
+      def put(struct = %_{}, args, override_options \\\\ []) # ...
+
   Example usage:
 
-  ```
-  defmodule Point do
-    @enforce_keys [:x, :y]
-    defstruct [:x, :y, :z]
+      iex> defmodule Line do
+      ...>   @enforce_keys [:length, :x, :y]
+      ...>   defstruct [:length, :x, :y]
+      ...>
+      ...>   use ExStructable # Adds `new` and `put` dynamically
+      ...>
+      ...>   # Optional hook
+      ...>   @impl true
+      ...>   def validate_struct(line, _options) do
+      ...>     if line.length <= 0 do
+      ...>       raise ArgumentError, "Invalid length found"
+      ...>     end
+      ...>
+      ...>     line
+      ...>   end
+      ...> end
+      ...>
+      ...> Line.new(length: 1, x: 1, y: 2) |> inspect()
+      "%ExStructableTest.Line{length: 1, x: 1, y: 2}"
 
-    use ExStructable # Adds `new` and `put` dynamically
+  <!-- For some reason you can't create structs as the required answer in -->
+  <!-- doctests. Comaring the inspected string is a workaround. -->
 
-    # Optional hook
-    @impl true
-    def validate_struct(struct) do
-      if struct.x < 0 or struct.y < 0 or struct.z < 0 do
-        raise ArgumentError
-      end
+  And `new` fails when `validate_struct/2` fails:
 
-      struct
-    end
-  end
-  ```
+      ...> Line.new(length: -2, x: -1, y: 2)
+      ** (ArgumentError) Invalid length found
 
-  These methods are added to the `Point` module:
+  Here is an example of the `put` method usage:
 
-  ```
-  def new(args, override_options \\\\ []) # ...
-  def put(struct = %_{}, args, override_options \\\\ []) # ...
-  ```
+      ...> Line.new(length: 1, x: 1, y: 2) |> Line.put(length: 3) |> inspect()
+      "%ExStructableTest.Line{length: 3, x: 1, y: 2}"
 
-  So you can do things like this:
+  And `put` method validation failure:
 
-  ```
-  Point.new(x: 1, y: 2)
-  # => %Point{x: 1, y: 2, z: nil}
+      ...> Line.new(length: 1, x: 1, y: 2) |> Line.put(length: -3, x: 2)
+      ** (ArgumentError) Invalid length found
 
-  Point.new(x: -1, y: 2)
-  # ArgumentError: Fails validation, as expected
+  ### Configuration
 
-  Point.new(x: 1, y: 2) |> Point.put(x: 3)
-  # => %Point{x: 3, y: 2, z: nil}
+  For more optional hooks like `validate_struct/2` (see `ExStructable.Hooks`).
 
-  Point.new(x: 1, y: 2) |> Point.put(x: -1)
-  # ArgumentError: Fails validation, as expected
-  ```
-
-  For more optional hooks like `validate_struct/2` (see
-  `ExStructable.Hooks`).
-
-  See [README](#{ExStructable.Mixfile.github_url()}) for more info.
+  The `use` (the `__using__` macro) has optional arguments. See
+  `ExStructable.default_options/0` for more info.
   """
 
+  # TODO move ExConstructor example from readme here
   # TODO Documentation comments on new and put methods
   # TODO tyepsesc on new and put methods
+  # TODO customisable strict_keys
   # TODO customisable new/put names
 
-  @typedoc "Key value pairs to put into the struct."
-  @type args :: keyword | map
-  @typedoc ""
+  @typedoc """
+  Key value pairs to put into the struct.
+  """
+  @type args :: keyword | %{required(atom) => any}
+
+  @typedoc """
+  Options passed to `use ExStructable`, `new`, and `put`.
+  """
   @type options :: keyword
+
   @typedoc """
   Usually is a struct, may not be if validate_struct/2 is overriden and
-  implemented differently.
+  returns something else.
   """
   @type validation_result :: struct | any
 
@@ -104,13 +115,31 @@ defmodule ExStructable do
     end
   end
 
-  defmacro __using__(options) do
-    options = Keyword.merge([
-      # call validate_struct callback?
+  @doc """
+  The doctest shows the default values of the of the possible options, and
+  their descriptions.
+
+    iex> default_options()
+    [
+      # Call validate_struct callback?
       validate_struct: true,
-      # use library https://github.com/appcues/exconstructor
-      use_ex_constructor_library: false, # boolean, or kw list
-    ], options)
+      # Use library https://github.com/appcues/exconstructor .
+      # Is a boolean or Keyword List of options to be passed to
+      # `use ExConstructor`.
+      use_ex_constructor_library: false,
+    ]
+  """
+  def default_options do
+    # The doctest above is added to make sure that the docs get updated
+    # when adding a new option.
+    [
+      validate_struct: true,
+      use_ex_constructor_library: false,
+    ]
+  end
+
+  defmacro __using__(options) do
+    options = Keyword.merge(default_options(), options)
 
     lib_args = ex_constructor_lib_args(options)
 

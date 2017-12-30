@@ -4,9 +4,6 @@
 Reduce boilerplate by generating struct `new` and `put` functions.
 Allows you validate your structs when they are created and updated.
 
-Hex docs can be found
-[here](https://hexdocs.pm/ex_structable/api-reference.html).
-
 ## Installation
 
 The package can be installed by adding `ex_structable` to your list of
@@ -139,13 +136,9 @@ PointNoValidation.new(x: 1, y: 2)
 # => %PointNoValidation{x: 1, y: 2, z: nil} # Still works!
 ```
 
-## Configuration
+## More Info
 
-### __using__ arguments
-
-The `use` has optional arguments. See the [top of
-`ExStructable.__using__/1` to see all their default
-values](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable.ex#L43).
+[For more info, see the API docs](https://hexdocs.pm/ex_structable/api-reference.html).
 
 ### Customisable Hooks
 

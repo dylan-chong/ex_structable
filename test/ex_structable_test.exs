@@ -1,6 +1,6 @@
 defmodule ExStructableTest do
   use ExUnit.Case
-  doctest ExStructable
+  doctest ExStructable, import: true
 
   defmodule ABCStruct do
     @enforce_keys [:a]
@@ -93,7 +93,7 @@ defmodule ExStructableTest do
     end
   end
 
-  defmodule Point do
+  defmodule Point3D do
     defstruct [:x, :y, :z]
 
     use ExStructable, use_ex_constructor_library: true
@@ -109,7 +109,7 @@ defmodule ExStructableTest do
   end
 
   # @enforce_keys [:x, :y]
-  # TODO use and make PointWithEnforce when ExConstructor fix their library
+  # TODO use and make Point3DWithEnforce when ExConstructor fix their library
 
   describe "new creates" do
     test "with all params" do
@@ -248,21 +248,21 @@ defmodule ExStructableTest do
 
   describe "__using__ ExConstructor" do
     test "new creates from Keyword List" do
-      expected = %Point{x: 1, y: 2, z: nil}
-      assert expected == Point.new(x: 1, y: 2)
+      expected = %Point3D{x: 1, y: 2, z: nil}
+      assert expected == Point3D.new(x: 1, y: 2)
     end
 
     test "new creates from Map" do
-      expected = %Point{x: 1, y: 2, z: nil}
-      assert expected == Point.new(%{x: 1, y: 2})
+      expected = %Point3D{x: 1, y: 2, z: nil}
+      assert expected == Point3D.new(%{x: 1, y: 2})
     end
 
     test "put adds from Map" do
-      expected = %Point{x: 3, y: 2, z: nil}
+      expected = %Point3D{x: 3, y: 2, z: nil}
       result =
         %{x: 1, y: 2}
-        |> Point.new()
-        |> Point.put(%{x: 3})
+        |> Point3D.new()
+        |> Point3D.put(%{x: 3})
       assert expected == result
     end
 
