@@ -51,8 +51,6 @@ defmodule ExStructable do
   See [README](#{ExStructable.Mixfile.github_url()}) for more info.
   """
 
-  # TODO impl hooks
-  # TODO Remove module argument in creat
   # TODO Documentation comments on new and put methods
   # TODO tyepsesc on new and put methods
   # TODO customisable new/put names
@@ -127,7 +125,7 @@ defmodule ExStructable do
       do
         merged_options = Keyword.merge(unquote(options), override_options)
 
-        struct = create_struct(args, __MODULE__, merged_options)
+        struct = create_struct(args, merged_options)
 
         finish = unquote(&ExStructable.finish_creating/3)
         result = finish.(struct, merged_options, __MODULE__)
@@ -158,14 +156,14 @@ defmodule ExStructable do
       # ExStructable.Hooks default implementations:
 
       @impl ExStructable.Hooks
-      def create_struct(args, module, options) do
+      def create_struct(args, options) do
         if Keyword.fetch!(options, :use_ex_constructor_library) do
-          apply(module, ExStructable.ex_constructor_new_name(), [args])
+          apply(__MODULE__, ExStructable.ex_constructor_new_name(), [args])
         else
-          Kernel.struct!(module, args)
+          Kernel.struct!(__MODULE__, args)
         end
       end
-      defoverridable [create_struct: 3]
+      defoverridable [create_struct: 2]
 
       @impl ExStructable.Hooks
       def put_into_struct(args, struct, options) do

@@ -15,7 +15,6 @@ defmodule ExStructable.Hooks do
   """
   @callback create_struct(
     args :: ExStructable.args,
-    module,
     options :: ExStructable.options
   ) :: struct
 
