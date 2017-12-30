@@ -6,8 +6,6 @@ defmodule ExStructable.DefaultHooks do
   to override behaviour (default implementations are provided).
   """
 
-  alias ExStructable, as: ES
-
   @doc """
   Override to make struct a custom way.
   This function ignores validity.
@@ -15,7 +13,11 @@ defmodule ExStructable.DefaultHooks do
   By default creates the struct with the given key/value args.
   This is used in `YourModule.new/2`.
   """
-  @callback create_struct(ES.args, module, ES.options) :: struct
+  @callback create_struct(
+    args :: ExStructable.args,
+    module,
+    options :: ExStructable.options
+  ) :: struct
 
   @doc """
   Override to put args into struct in a custom way, and return new struct.
@@ -24,7 +26,11 @@ defmodule ExStructable.DefaultHooks do
   By default puts the given key/value args into the given struct.
   This is used in `YourModule.put/3`.
   """
-  @callback put_into_struct(ES.args, struct, ES.options) :: struct
+  @callback put_into_struct(
+    args :: ExStructable.args,
+    struct,
+    options :: ExStructable.options
+  ) :: struct
 
   @doc """
   Override to raise or return a custom error value such as `{:error, struct}`.
@@ -42,7 +48,10 @@ defmodule ExStructable.DefaultHooks do
   ```
   because it raises a FunctionClauseError when the guard isn't matched.
   """
-  @callback validate_struct(struct, ES.options) :: ES.validation_result
+  @callback validate_struct(
+    struct,
+    options :: ExStructable.options
+  ) :: ExStructable.validation_result
 
   @doc """
   Called when a struct has passed validation after a call to
@@ -51,7 +60,10 @@ defmodule ExStructable.DefaultHooks do
 
   Override to add custom functionality.
   """
-  @callback after_new(ES.validation_result, ES.options) :: none
+  @callback after_new(
+    validation_result :: ExStructable.validation_result,
+    options :: ExStructable.options
+  ) :: none
 
   @doc """
   Called when a struct has passed validation after a call to
@@ -60,6 +72,9 @@ defmodule ExStructable.DefaultHooks do
 
   Override to add custom functionality.
   """
-  @callback after_put(ES.validation_result, ES.options) :: none
+  @callback after_put(
+    validation_result :: ExStructable.validation_result,
+    options :: ExStructable.options
+  ) :: none
 
 end
