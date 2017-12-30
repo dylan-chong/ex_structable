@@ -157,6 +157,7 @@ defmodule ExStructable do
 
       # ExStructable.Hooks default implementations:
 
+      @impl ExStructable.Hooks
       def create_struct(args, module, options) do
         if Keyword.fetch!(options, :use_ex_constructor_library) do
           apply(module, ExStructable.ex_constructor_new_name(), [args])
@@ -166,6 +167,7 @@ defmodule ExStructable do
       end
       defoverridable [create_struct: 3]
 
+      @impl ExStructable.Hooks
       def put_into_struct(args, struct, options) do
         lib_args = Keyword.fetch!(options, :use_ex_constructor_library)
 
@@ -180,16 +182,19 @@ defmodule ExStructable do
       end
       defoverridable [put_into_struct: 3]
 
+      @impl ExStructable.Hooks
       def validate_struct(struct, _options) do
         struct
       end
       defoverridable [validate_struct: 2]
 
+      @impl ExStructable.Hooks
       def after_new(_result, _options) do
         # Stub
       end
       defoverridable [after_new: 2]
 
+      @impl ExStructable.Hooks
       def after_put(_result, _options) do
         # Stub
       end

@@ -17,6 +17,7 @@ defmodule ExStructableTest do
     defstruct [:f]
     use ExStructable
 
+    @impl true
     def validate_struct(struct = %FStruct{f: f}, _) do
       if f < 0 do
         raise ArgumentError, "invalid param"
@@ -30,6 +31,7 @@ defmodule ExStructableTest do
     defstruct [:g]
     use ExStructable
 
+    @impl true
     def validate_struct(_, _), do: nil
   end
 
@@ -37,15 +39,18 @@ defmodule ExStructableTest do
     defstruct [:h]
     use ExStructable
 
+    @impl true
     def validate_struct(struct, _) do
       if struct.h < 0, do: raise ArgumentError, "Invalid struct"
       struct
     end
 
+    @impl true
     def after_new(_, _) do
       raise RuntimeError, "after_new called"
     end
 
+    @impl true
     def after_put(_, _) do
       raise RuntimeError, "after_put called"
     end
@@ -67,7 +72,7 @@ defmodule ExStructableTest do
     defstruct [:k, :l]
     use ExStructable
 
-    @impl ExStructable
+    @impl true
     def validate_struct(struct = %KStruct{k: k}, _) do
       if k < 0 do
         raise ArgumentError, "invalid param"
@@ -81,6 +86,7 @@ defmodule ExStructableTest do
     defstruct [:the_field]
     use ExStructable, use_ex_constructor_library: true
 
+    @impl true
     def validate_struct(struct = %LStruct{the_field: f}, _) do
       if f < 0, do: raise ArgumentError, "invalid param"
       struct
@@ -92,6 +98,7 @@ defmodule ExStructableTest do
 
     use ExStructable, use_ex_constructor_library: true
 
+    @impl true
     def validate_struct(struct, _) do
       if struct.x < 0 or struct.y < 0 or struct.z < 0 do
         raise ArgumentError
