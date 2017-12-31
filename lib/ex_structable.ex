@@ -67,8 +67,8 @@ defmodule ExStructable do
 
   ### ExConstructor Integration
 
-  You can use [appcues/ExConstructor](https://github.com/appcues/exconstructor)
-  at the same time using `use_ex_constructor_library: true`:
+  You can use [ExConstructor](https://github.com/appcues/exconstructor) at the
+  same time using `use_ex_constructor_library: true`:
 
       iex> defmodule Line2 do
       ...>   defstruct [:length_in_cm, :x, :y]

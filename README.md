@@ -1,8 +1,12 @@
 # ExStructable
 
-<!-- If this is changed, update mix.exs.description/1 -->
+<!-- If this is changed, update mix.exs description/0 -->
 Reduce boilerplate by generating struct `new` and `put` functions.
 Allows you validate your structs when they are created and updated.
+<!-- If this is changed, update mix.exs description/0 -->
+
+Optionally uses [ExConstructor](https://github.com/appcues/exconstructor) to
+"make it easier to instantiate struts from external data".
 
 ## Installation
 
