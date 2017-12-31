@@ -7,6 +7,9 @@ defmodule ExStructable do
       def new(args, override_options \\\\ []) # ...
       def put(struct = %_{}, args, override_options \\\\ []) # ...
 
+  `@doc`s are added to your module for the above methods. Run `mix exdoc` to
+  see them.
+
   Example usage:
 
       iex> defmodule Line do
@@ -30,7 +33,7 @@ defmodule ExStructable do
       "%ExStructableTest.Line{length: 1, x: 1, y: 2}"
 
   <!-- For some reason you can't create structs as the required answer in -->
-  <!-- doctests. Comaring the inspected string is a workaround. -->
+  <!-- doctests. Comparing the inspected string is a workaround. -->
 
   And `new` fails when `validate_struct/2` fails:
 
@@ -100,7 +103,6 @@ defmodule ExStructable do
         ]
   """
 
-  # TODO Documentation comments on new and put methods
   # TODO tyepsesc on new and put methods
   # TODO customisable strict_keys
   # TODO customisable new/put names
@@ -160,8 +162,8 @@ defmodule ExStructable do
   end
 
   @doc """
-  The doctest below shows the default values of the of the possible options,
-  and their descriptions.
+  The doctest below shows the default values of the of the possible `use` and
+  `override_options`, and their descriptions.
 
       iex> default_options()
       [
@@ -194,6 +196,13 @@ defmodule ExStructable do
 
       @behaviour ExStructable.Hooks
 
+      @doc """
+      Create a new struct.
+
+      * args - (Keyword List or Map) Key-Value pairs used to create the struct.
+      * override_options - (Keyword List) Options to override existing ones. See Options
+      documentation in `ExStructable` and `ExStructable.default_options/0`.
+      """
       def new(args, override_options \\ [])
       when (is_list(args) or is_map(args)) and is_list(override_options)
       do
@@ -208,6 +217,14 @@ defmodule ExStructable do
         result
       end
 
+      @doc """
+      Alter and existing struct.
+
+      * struct - Struct to modify. Only accepts a struct of this module's type.
+      * args - (Keyword List or Map) Key-Value pairs used to override existing
+      values in the given struct.
+      * override_options - See `new/2`'s override_options.
+      """
       def put(struct = %_{}, args, override_options \\ [])
       when (is_list(args) or is_map(args)) and is_list(override_options)
       do

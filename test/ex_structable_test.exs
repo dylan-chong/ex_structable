@@ -299,5 +299,4 @@ defmodule ExStructableTest do
       )
     end
   end
-
 end
