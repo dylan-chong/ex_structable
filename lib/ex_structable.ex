@@ -7,7 +7,7 @@ defmodule ExStructable do
       def new(args, override_opts \\\\ []) # ...
       def put(struct = %_{}, args, override_opts \\\\ []) # ...
 
-  `@doc`s are added to your module for the above methods. Run `mix exdoc` to
+  `@doc`s are added to your module for the above methods. Run `mix doc` to
   see them.
 
   Example usage:
@@ -56,7 +56,7 @@ defmodule ExStructable do
 
   The `use` macro has optional arguments. See `__using__/1`.
 
-  You even can pass these options to the `new` and `put` methods:
+  You can even pass these options to the `new` and `put` methods:
 
       ...> Line.new([length: -3, x: 1, y: 2], [validate_struct: false])
       "%ExStructableTest.Line{length: -3, x: 1, y: 2}"

@@ -12,7 +12,7 @@ defmodule ExStructable.Hooks do
   @type ignored_return_type :: any
 
   @doc """
-  Override to make struct a custom way.
+  Override to create your struct in a custom way.
   This function ignores validity.
 
   By default creates the struct with the given key/value args.
@@ -37,10 +37,12 @@ defmodule ExStructable.Hooks do
   ) :: struct
 
   @doc """
-  Override to raise or return a custom error value such as `{:error, struct}`.
+  Override to check that the created struct has valid values.
 
-  The return value is the return value of YourModule.new/2, so usually returns
-  are struct when validation is successful.
+  You should raise, or return a custom error value such as `{:error, struct}`
+  when validation fails. The return value is the return value of
+  `YourModule.new/2`/`YourModule.put/3`, so usually returns a struct when
+  validation passes.
 
   By default returns the given struct without any checking.
 
