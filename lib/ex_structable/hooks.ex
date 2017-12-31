@@ -9,6 +9,8 @@ defmodule ExStructable.Hooks do
   warnings about incorrect hook definitions.
   """
 
+  @type ignored_return_type :: any
+
   @doc """
   Override to make struct a custom way.
   This function ignores validity.
@@ -66,7 +68,7 @@ defmodule ExStructable.Hooks do
   @callback after_new(
     validation_result :: ExStructable.validation_result,
     options :: ExStructable.options
-  ) :: none
+  ) :: ignored_return_type
 
   @doc """
   Called when a struct has passed validation after a call to
@@ -78,6 +80,6 @@ defmodule ExStructable.Hooks do
   @callback after_put(
     validation_result :: ExStructable.validation_result,
     options :: ExStructable.options
-  ) :: none
+  ) :: ignored_return_type
 
 end

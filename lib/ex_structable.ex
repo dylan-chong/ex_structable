@@ -54,8 +54,7 @@ defmodule ExStructable do
 
   #### Options
 
-  The `use` macro has optional arguments. See `ExStructable.default_options/0`
-  for more info.
+  The `use` macro has optional arguments. See `__using__/1`.
 
   You even can pass these options to the `new` and `put` methods:
 
@@ -103,7 +102,6 @@ defmodule ExStructable do
         ]
   """
 
-  # TODO tyepsesc on new and put methods
   # TODO customisable strict_keys
   # TODO customisable new/put names
 
@@ -184,6 +182,11 @@ defmodule ExStructable do
     ]
   end
 
+  @doc """
+  Add `new` and `put` functions to the caller's module.
+
+  * options - (Keyword List) See `default_options/0` for more all possible options.
+  """
   defmacro __using__(options) do
     options = Keyword.merge(default_options(), options)
 
@@ -203,6 +206,10 @@ defmodule ExStructable do
       * override_options - (Keyword List) Options to override existing ones. See Options
       documentation in `ExStructable` and `ExStructable.default_options/0`.
       """
+      @spec new(
+        ExStructable.args,
+        ExStructable.options
+      ) :: ExStructable.validation_result
       def new(args, override_options \\ [])
       when (is_list(args) or is_map(args)) and is_list(override_options)
       do
@@ -225,6 +232,11 @@ defmodule ExStructable do
       values in the given struct.
       * override_options - See `new/2`'s override_options.
       """
+      @spec put(
+        %__MODULE__{},
+        ExStructable.args,
+        ExStructable.options
+      ) :: ExStructable.validation_result
       def put(struct = %_{}, args, override_options \\ [])
       when (is_list(args) or is_map(args)) and is_list(override_options)
       do
