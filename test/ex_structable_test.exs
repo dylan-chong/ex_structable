@@ -111,6 +111,21 @@ defmodule ExStructableTest do
   # @enforce_keys [:x, :y]
   # TODO use and make Point3DWithEnforce when ExConstructor fix their library
 
+  defmodule CustomNames do
+    defstruct [:the_field]
+    use ExStructable, [
+      use_ex_constructor_library: true,
+      new_function_name: :custom_new,
+      put_function_name: :custom_put,
+    ]
+
+    @impl true
+    def validate_struct(struct = %CustomNames{the_field: f}, _) do
+      if f < 0, do: raise ArgumentError, "invalid param"
+      struct
+    end
+  end
+
   describe "new creates" do
     test "with all params" do
       expected = %ABCStruct{a: 1, b: 2, c: {4, 5}}
@@ -296,6 +311,55 @@ defmodule ExStructableTest do
         ArgumentError,
         "invalid param",
         fn -> LStruct.put(%LStruct{the_field: 0}, theField: -1) end
+      )
+    end
+  end
+
+  describe "with customised `new` function" do
+    test "the customised function exists" do
+      expected = %CustomNames{the_field: 1}
+      assert expected == CustomNames.custom_new(the_field: 1)
+    end
+
+    test "the `new` function does not exist" do
+      assert_raise(
+        UndefinedFunctionError,
+        fn -> CustomNames.new(the_field: -1) end
+      )
+    end
+
+    test "validate_struct is still called" do
+      assert_raise(
+        ArgumentError,
+        "invalid param",
+        fn -> CustomNames.custom_new(the_field: -1) end
+      )
+    end
+  end
+
+  describe "with customised `put` function" do
+    test "the customised function exists" do
+      expected = %CustomNames{the_field: 1}
+      assert expected == CustomNames.custom_put(
+        %CustomNames{the_field: 2},
+        the_field: 1
+      )
+    end
+
+    test "the `put` function does not exist" do
+      c = %CustomNames{the_field: 2}
+      assert_raise(
+        UndefinedFunctionError,
+        fn -> CustomNames.put(c, the_field: 1) end
+      )
+    end
+
+    test "validate_struct is still called" do
+      c = %CustomNames{the_field: 2}
+      assert_raise(
+        ArgumentError,
+        "invalid param",
+        fn -> CustomNames.custom_put(c, the_field: -1) end
       )
     end
   end

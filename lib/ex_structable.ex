@@ -4,8 +4,8 @@ defmodule ExStructable do
 
   These methods are added to the module that has `use ExStructable`:
 
-      def new(args, override_options \\\\ []) # ...
-      def put(struct = %_{}, args, override_options \\\\ []) # ...
+      def new(args, override_opts \\\\ []) # ...
+      def put(struct = %_{}, args, override_opts \\\\ []) # ...
 
   `@doc`s are added to your module for the above methods. Run `mix exdoc` to
   see them.
@@ -103,7 +103,6 @@ defmodule ExStructable do
   """
 
   # TODO customisable strict_keys
-  # TODO customisable new/put names
 
   @typedoc """
   Key value pairs to put into the struct.
@@ -161,7 +160,7 @@ defmodule ExStructable do
 
   @doc """
   The doctest below shows the default values of the of the possible `use` and
-  `override_options`, and their descriptions.
+  `override_opts`, and their descriptions.
 
       iex> default_options()
       [
@@ -171,6 +170,10 @@ defmodule ExStructable do
         # Is a boolean or Keyword List of options to be passed to
         # `use ExConstructor`.
         use_ex_constructor_library: false,
+        # The name of the `new` function to define in your module.
+        new_function_name: :new,
+        # The name of the `put` function to define in your module.
+        put_function_name: :put,
       ]
   """
   def default_options do
@@ -179,6 +182,8 @@ defmodule ExStructable do
     [
       validate_struct: true,
       use_ex_constructor_library: false,
+      new_function_name: :new,
+      put_function_name: :put,
     ]
   end
 
@@ -192,6 +197,9 @@ defmodule ExStructable do
 
     lib_args = ex_constructor_lib_args(options)
 
+    new_function_name = Keyword.fetch!(options, :new_function_name)
+    put_function_name = Keyword.fetch!(options, :put_function_name)
+
     quote do
       if unquote(lib_args) do
         use ExConstructor, unquote(lib_args)
@@ -203,17 +211,17 @@ defmodule ExStructable do
       Create a new struct.
 
       * args - (Keyword List or Map) Key-Value pairs used to create the struct.
-      * override_options - (Keyword List) Options to override existing ones. See Options
+      * override_opts - (Keyword List) Options to override existing ones. See Options
       documentation in `ExStructable` and `ExStructable.default_options/0`.
       """
-      @spec new(
+      @spec unquote(new_function_name)(
         ExStructable.args,
         ExStructable.options
       ) :: ExStructable.validation_result
-      def new(args, override_options \\ [])
-      when (is_list(args) or is_map(args)) and is_list(override_options)
+      def unquote(new_function_name)(args, override_opts \\ [])
+      when (is_list(args) or is_map(args)) and is_list(override_opts)
       do
-        merged_options = Keyword.merge(unquote(options), override_options)
+        merged_options = Keyword.merge(unquote(options), override_opts)
 
         struct = create_struct(args, merged_options)
 
@@ -230,22 +238,22 @@ defmodule ExStructable do
       * struct - Struct to modify. Only accepts a struct of this module's type.
       * args - (Keyword List or Map) Key-Value pairs used to override existing
       values in the given struct.
-      * override_options - See `new/2`'s override_options.
+      * override_opts - See `new/2`'s override_opts.
       """
-      @spec put(
+      @spec unquote(put_function_name)(
         %__MODULE__{},
         ExStructable.args,
         ExStructable.options
       ) :: ExStructable.validation_result
-      def put(struct = %_{}, args, override_options \\ [])
-      when (is_list(args) or is_map(args)) and is_list(override_options)
+      def unquote(put_function_name)(struct = %_{}, args, override_opts \\ [])
+      when (is_list(args) or is_map(args)) and is_list(override_opts)
       do
         unless struct.__struct__ == __MODULE__ do
           raise ArgumentError,
             "#{inspect(struct)} struct is not a %#{__MODULE__}{}"
         end
 
-        merged_options = Keyword.merge(unquote(options), override_options)
+        merged_options = Keyword.merge(unquote(options), override_opts)
 
         new_struct = put_into_struct(args, struct, merged_options)
 
