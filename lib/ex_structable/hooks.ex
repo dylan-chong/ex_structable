@@ -2,8 +2,8 @@ defmodule ExStructable.Hooks do
   @moduledoc """
   Behaviour for default hook implementations.
 
-  Implement methods below in the module with `use ExStructable`
-  to override behaviour (default implementations are provided).
+  Implement methods below in the module with `use ExStructable` to override
+  behaviour (default implementations are provided in `ExStructable`).
 
   Be sure to use `@impl true` above the hook implementation to add compile-time
   warnings about incorrect hook definitions.

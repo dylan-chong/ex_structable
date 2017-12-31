@@ -89,6 +89,8 @@ defmodule ExStructable do
       ...> Line2.new(lengthInCm: 1, x: 1, y: 2) |> inspect()
       "%ExStructableTest.Line2{length_in_cm: 1, x: 1, y: 2}"
 
+  And validation still fails as expected:
+
       ...> Line2.new(lengthInCm: -3, x: 1, y: 2) |> inspect()
       ** (ArgumentError) Invalid length found
 
@@ -97,17 +99,15 @@ defmodule ExStructable do
 
   If you want to pass args to `ExConstructor`:
 
-        use ExStructable, use_ex_constructor_library: [
-          # args for `use ExConstructor` here
-        ]
+      use ExStructable, use_ex_constructor_library: [
+        # args for `use ExConstructor` here
+      ]
   """
-
-  # TODO customisable strict_keys
 
   @typedoc """
   Key value pairs to put into the struct.
   """
-  @type args :: keyword | %{required(atom) => any}
+  @type args :: keyword | %{required(atom | String.t) => any}
 
   @typedoc """
   Options passed to `use ExStructable`, `new`, and `put`.
@@ -174,6 +174,9 @@ defmodule ExStructable do
         new_function_name: :new,
         # The name of the `put` function to define in your module.
         put_function_name: :put,
+        # Throw KeyError on passing unknown key, and
+        # throw ArgumentError if a key from `@enforce_keys` is missing.
+        strict_keys: true
       ]
   """
   def default_options do
@@ -184,6 +187,7 @@ defmodule ExStructable do
       use_ex_constructor_library: false,
       new_function_name: :new,
       put_function_name: :put,
+      strict_keys: true,
     ]
   end
 
@@ -269,9 +273,14 @@ defmodule ExStructable do
       @impl ExStructable.Hooks
       def create_struct(args, options) do
         if Keyword.fetch!(options, :use_ex_constructor_library) do
-          apply(__MODULE__, ExStructable.ex_constructor_new_name(), [args])
+          new_function_name = ExStructable.ex_constructor_new_name()
+          apply(__MODULE__, new_function_name, [args])
         else
-          Kernel.struct!(__MODULE__, args)
+          if Keyword.fetch!(options, :strict_keys) do
+            Kernel.struct!(__MODULE__, args)
+          else
+            Kernel.struct(__MODULE__, args)
+          end
         end
       end
       defoverridable [create_struct: 2]
@@ -281,12 +290,22 @@ defmodule ExStructable do
         lib_args = Keyword.fetch!(options, :use_ex_constructor_library)
 
         if lib_args do
-          ExConstructor.populate_struct(struct, args, case lib_args do
-            true -> []
-            _ -> lib_args
-          end)
-          else
+          ExConstructor.populate_struct(
+            struct,
+            args,
+            case lib_args do
+              true ->
+                []
+              _ ->
+                lib_args
+            end
+          )
+        else
+          if Keyword.fetch!(options, :strict_keys) do
             Kernel.struct!(struct, args)
+          else
+            Kernel.struct(struct, args)
+          end
         end
       end
       defoverridable [put_into_struct: 3]

@@ -43,6 +43,7 @@ defmodule ExStructable.Mixfile do
       {:ex_doc, "~> 0.11", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test, runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:ex_parameterized, "~> 1.3.0", only: :test, runtime: false},
     ]
   end
 

@@ -1,5 +1,6 @@
 defmodule ExStructableTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
+  use ExUnit.Parameterized
   doctest ExStructable, import: true
 
   defmodule ABCStruct do
@@ -94,6 +95,7 @@ defmodule ExStructableTest do
   end
 
   defmodule Point3D do
+    @enforce_keys [:x, :y]
     defstruct [:x, :y, :z]
 
     use ExStructable, use_ex_constructor_library: true
@@ -107,9 +109,6 @@ defmodule ExStructableTest do
       struct
     end
   end
-
-  # @enforce_keys [:x, :y]
-  # TODO use and make Point3DWithEnforce when ExConstructor fix their library
 
   defmodule CustomNames do
     defstruct [:the_field]
@@ -313,6 +312,29 @@ defmodule ExStructableTest do
         fn -> LStruct.put(%LStruct{the_field: 0}, theField: -1) end
       )
     end
+
+# TODO Uncommented once ExConstructor library is fixed
+#     test "new fails with missing @enforce_key" do
+#       assert_raise(
+#         ArgumentError,
+#         fn -> Point3D.new(x: 1) end
+#       )
+#     end
+#
+#     test "new fails with invalid key" do
+#       assert_raise(
+#         KeyError,
+#         fn -> Point3D.new(invalid: 3, x: 1, y: 2) end
+#       )
+#     end
+#
+#     test "put fails with invalid key" do
+#       p = Point3D.new(x: 1, y: 2)
+#       assert_raise(
+#         KeyError,
+#         fn -> Point3D.put(p, invalid: 3) end
+#       )
+#     end
   end
 
   describe "with customised `new` function" do
@@ -363,4 +385,5 @@ defmodule ExStructableTest do
       )
     end
   end
+
 end
