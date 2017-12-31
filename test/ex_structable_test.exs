@@ -121,6 +121,11 @@ defmodule ExStructableTest do
       expected = %ABCStruct{a: 1, b: 2, c: 3}
       assert ABCStruct.new(a: 1, b: 2) == expected
     end
+
+    test "with all params from map" do
+      expected = %ABCStruct{a: 1, b: 2, c: {4, 5}}
+      assert ABCStruct.new(%{a: 1, b: 2, c: {4, 5}}) == expected
+    end
   end
 
   describe "when required param is not passed" do
@@ -201,6 +206,11 @@ defmodule ExStructableTest do
     test "updates data successfully" do
       expected = %KStruct{k: 1, l: 2}
       assert expected == KStruct.put(%KStruct{k: 2, l: 2}, [k: 1])
+    end
+
+    test "updates data successfully from map" do
+      expected = %KStruct{k: 1, l: 2}
+      assert expected == KStruct.put(%KStruct{k: 2, l: 2}, %{k: 1})
     end
 
     test "fails with invalid key" do

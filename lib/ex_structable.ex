@@ -34,7 +34,7 @@ defmodule ExStructable do
 
   And `new` fails when `validate_struct/2` fails:
 
-      ...> Line.new(length: -2, x: -1, y: 2)
+      ...> Line.new(length: -2, x: 1, y: 2)
       ** (ArgumentError) Invalid length found
 
   Here is an example of the `put` method usage:
@@ -49,13 +49,57 @@ defmodule ExStructable do
 
   ### Configuration
 
+  #### Options
+
+  The `use` macro has optional arguments. See `ExStructable.default_options/0`
+  for more info.
+
+  You even can pass these options to the `new` and `put` methods:
+
+      ...> Line.new([length: -3, x: 1, y: 2], [validate_struct: false])
+      "%ExStructableTest.Line{length: -3, x: 1, y: 2}"
+
+  #### Hooks
+
   For more optional hooks like `validate_struct/2` (see `ExStructable.Hooks`).
 
-  The `use` (the `__using__` macro) has optional arguments. See
-  `ExStructable.default_options/0` for more info.
+  ### ExConstructor Integration
+
+  You can use [appcues/ExConstructor](https://github.com/appcues/exconstructor)
+  at the same time using `use_ex_constructor_library: true`:
+
+      iex> defmodule Line2 do
+      ...>   defstruct [:length_in_cm, :x, :y]
+      ...>
+      ...>   use ExStructable, use_ex_constructor_library: true
+      ...>
+      ...>   @impl true
+      ...>   def validate_struct(line, _options) do
+      ...>     if line.length_in_cm <= 0 do
+      ...>       raise ArgumentError, "Invalid length found"
+      ...>     end
+      ...>
+      ...>     line
+      ...>   end
+      ...> end
+      ...>
+      ...> # We can now pass camelcase arguments
+      ...> Line2.new(lengthInCm: 1, x: 1, y: 2) |> inspect()
+      "%ExStructableTest.Line2{length_in_cm: 1, x: 1, y: 2}"
+
+      ...> Line2.new(lengthInCm: -3, x: 1, y: 2) |> inspect()
+      ** (ArgumentError) Invalid length found
+
+  (Do not put `use ExConstructor` as that is added to your module when the
+  option `use_ex_constructor_library` is set to a truthy value).
+
+  If you want to pass args to `ExConstructor`:
+
+        use ExStructable, use_ex_constructor_library: [
+          # args for `use ExConstructor` here
+        ]
   """
 
-  # TODO move ExConstructor example from readme here
   # TODO Documentation comments on new and put methods
   # TODO tyepsesc on new and put methods
   # TODO customisable strict_keys
@@ -82,15 +126,15 @@ defmodule ExStructable do
 
   @doc false
   def ex_constructor_lib_args(options) do
-    use_option = Keyword.fetch!(options, :use_ex_constructor_library)
+    use_arg = Keyword.fetch!(options, :use_ex_constructor_library)
 
-    if use_option do
-      default_options = [name: ex_constructor_new_name()]
+    if use_arg do
+      default_args = [name: ex_constructor_new_name()]
 
-      if is_list(use_option) do
-        Keyword.merge(default_options, use_option)
+      if is_list(use_arg) do
+        Keyword.merge(default_args, use_arg)
       else
-        default_options
+        default_args
       end
     else
       nil
@@ -116,18 +160,18 @@ defmodule ExStructable do
   end
 
   @doc """
-  The doctest shows the default values of the of the possible options, and
-  their descriptions.
+  The doctest below shows the default values of the of the possible options,
+  and their descriptions.
 
-    iex> default_options()
-    [
-      # Call validate_struct callback?
-      validate_struct: true,
-      # Use library https://github.com/appcues/exconstructor .
-      # Is a boolean or Keyword List of options to be passed to
-      # `use ExConstructor`.
-      use_ex_constructor_library: false,
-    ]
+      iex> default_options()
+      [
+        # Call validate_struct callback?
+        validate_struct: true,
+        # Use library https://github.com/appcues/exconstructor .
+        # Is a boolean or Keyword List of options to be passed to
+        # `use ExConstructor`.
+        use_ex_constructor_library: false,
+      ]
   """
   def default_options do
     # The doctest above is added to make sure that the docs get updated

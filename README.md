@@ -106,8 +106,9 @@ defmodule Point do
 
   use ExStructable # Adds `new` and `put` dynamically
 
+  # Optional hook
   @impl true
-  def validate_struct(struct) do
+  def validate_struct(struct, _options) do
     if struct.x < 0 or struct.y < 0 or struct.z < 0 do
       raise ArgumentError
     end
@@ -122,7 +123,7 @@ Point.new(x: -1, y: 2)
 # Fails validation, as expected
 ```
 
-And when we don't want validation...
+And when we don't want validation, the module is as clean as a whistle...
 
 ```elixir
 defmodule PointNoValidation do
@@ -138,42 +139,4 @@ PointNoValidation.new(x: 1, y: 2)
 
 ## More Info
 
-[For more info, see the API docs](https://hexdocs.pm/ex_structable/api-reference.html).
-
-### Customisable Hooks
-
-[See this file to see what hooks you can
-implement](https://github.com/dylan-chong/ex_structable/blob/master/lib/ex_structable/default_hooks.ex).
-
-### ExConstructor Support
-
-You can use [appcues/ExConstructor](https://github.com/appcues/exconstructor)
-at the same time using:
-
-```elixir
-defmodule PointNoValidation do
-  defstruct [:x, :y, :z]
-
-  use ExStructable, use_ex_constructor_library: true
-end
-
-Point.new(x: 1, y: 2)
-# => %Point{x: 1, y: 2, z: nil}
-
-Point.new(%{x: 1, y: 2})
-# => %Point{x: 1, y: 2, z: nil}
-```
-
-(do not put `use ExConstructor`).
-
-Or if you want to pass args to `ExConstructor`:
-
-```elixir
-defmodule PointNoValidation do
-  defstruct [:x, :y, :z]
-
-  use ExStructable, use_ex_constructor_library: [
-    # args for ExConstructor here
-  ]
-end
-```
+[For more detailed API documentation, see HexDocs](https://hexdocs.pm/ex_structable/api-reference.html).
