@@ -12,12 +12,7 @@ defmodule ExStructable.Mixfile do
       deps: deps(),
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        "coveralls": :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test,
-      ],
+      preferred_cli_env: preferred_cli_env(),
       source_url: github_url(),
       homepage_url: github_url(),
     ]
@@ -70,6 +65,19 @@ defmodule ExStructable.Mixfile do
         "credo",
         "dialyzer",
       ],
+    ]
+  end
+
+  defp preferred_cli_env do
+    [
+      # Aliases
+      "check": :test,
+      # Coveralls
+      "coveralls": :test,
+      "coveralls.travis": :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test,
     ]
   end
 end
