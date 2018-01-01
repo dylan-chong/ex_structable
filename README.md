@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/dylan-chong/ex_structable.svg?branch=master)](https://travis-ci.org/dylan-chong/ex_structable)
 [![Coverage Status](https://coveralls.io/repos/github/dylan-chong/ex_structable/badge.svg?branch=master)](https://coveralls.io/github/dylan-chong/ex_structable?branch=master)
+[![](https://img.shields.io/hexpm/v/ex_structable.svg?style=flat)](https://hex.pm/packages/ex_structable)
 
 <!-- If this is changed, update mix.exs description/0 -->
 Reduce boilerplate by generating struct `new` and `put` functions.

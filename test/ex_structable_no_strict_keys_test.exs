@@ -1,22 +1,22 @@
 defmodule TestModules do
+  defmodule NoStrictKeys do
+    @enforce_keys [:a]
+    defstruct [:a]
+    use ExStructable, strict_keys: false
+  end
+
+  defmodule NoStrictKeysExConstructor do
+    #   @enforce_keys [:a] # TODO Put back once the library is fixed
+    defstruct [:a]
+    use ExStructable, use_ex_constructor_library: true, strict_keys: false
+  end
+
   def test_modules do
     [
       "without ExConstructor": {NoStrictKeys},
       "with ExConstructor": {NoStrictKeysExConstructor},
     ]
   end
-end
-
-defmodule NoStrictKeys do
-  @enforce_keys [:a]
-  defstruct [:a]
-  use ExStructable, strict_keys: false
-end
-
-defmodule NoStrictKeysExConstructor do
-#   @enforce_keys [:a] # TODO Put back once the library is fixed
-  defstruct [:a]
-  use ExStructable, use_ex_constructor_library: true, strict_keys: false
 end
 
 defmodule ExStructableNoStrictKeysTest do
@@ -57,4 +57,5 @@ defmodule ExStructableNoStrictKeysTest do
       assert expected == module.new([])
     end, do: TestModules.test_modules()
   end
+
 end
