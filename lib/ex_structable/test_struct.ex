@@ -1,4 +1,4 @@
-defmodule ExStructable.TestStruct do # TODO
+defmodule ExStructable.TestStruct do
   @moduledoc false
   # This is a hidden module that is only here for testing type specs
   # (which are checked when you run `mix dialyzer`).
