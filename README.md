@@ -1,6 +1,7 @@
 # ExStructable
 
 [![Build Status](https://travis-ci.org/dylan-chong/ex_structable.svg?branch=master)](https://travis-ci.org/dylan-chong/ex_structable)
+[![Coverage Status](https://coveralls.io/repos/github/dylan-chong/ex_structable/badge.svg?branch=master)](https://coveralls.io/github/dylan-chong/ex_structable?branch=master)
 
 <!-- If this is changed, update mix.exs description/0 -->
 Reduce boilerplate by generating struct `new` and `put` functions.

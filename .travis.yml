@@ -16,4 +16,5 @@ script:
   - export PROJECT_NAME=ex_structable
   - mix test
   - mix credo
+  - mix coveralls
 #  - dialyzer --no_check_plt --plt $PLT_LOCATION --no_native _build/test/lib/$PROJECT_NAME/ebin
