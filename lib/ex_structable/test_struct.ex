@@ -14,7 +14,8 @@ defmodule TestStruct do # TODO
     TestStruct.new([length: 1])
     TestStruct.new([length: 1], [strict_keys: true])
 
-    TestStruct.new(%{length: 1})
+    %{length: 1}
+    |> TestStruct.new()
     |> TestStruct.put(%{x: 1})
     |> TestStruct.put(%{y: 1}, [strict_keys: false])
   end
