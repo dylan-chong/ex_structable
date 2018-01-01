@@ -176,6 +176,7 @@ defmodule ExStructable do
         put_function_name: :put,
         # Throw KeyError on passing unknown key, and
         # throw ArgumentError if a key from `@enforce_keys` is missing.
+        # NOTE: Currently doesn't work on ExConstructor because library is broken
         strict_keys: true
       ]
   """
@@ -187,7 +188,7 @@ defmodule ExStructable do
       use_ex_constructor_library: false,
       new_function_name: :new,
       put_function_name: :put,
-      strict_keys: true,
+      strict_keys: true, # TODO this doesn't work on ExConstructor because library is broken
     ]
   end
 
