@@ -14,7 +14,7 @@ defmodule NoStrictKeys do
 end
 
 defmodule NoStrictKeysExConstructor do
-  @enforce_keys [:a]
+#   @enforce_keys [:a] # TODO Put back once the library is fixed
   defstruct [:a]
   use ExStructable, use_ex_constructor_library: true, strict_keys: false
 end

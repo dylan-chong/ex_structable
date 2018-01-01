@@ -95,7 +95,7 @@ defmodule ExStructableTest do
   end
 
   defmodule Point3D do
-    @enforce_keys [:x, :y]
+#     @enforce_keys [:x, :y] # TODO Uncommented once library is fixed
     defstruct [:x, :y, :z]
 
     use ExStructable, use_ex_constructor_library: true
