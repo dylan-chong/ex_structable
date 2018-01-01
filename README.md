@@ -1,5 +1,7 @@
 # ExStructable
 
+[![Build Status](https://travis-ci.org/dylan-chong/ex_structable.svg?branch=master)](https://travis-ci.org/dylan-chong/ex_structable)
+
 <!-- If this is changed, update mix.exs description/0 -->
 Reduce boilerplate by generating struct `new` and `put` functions.
 Allows you validate your structs when they are created and updated.

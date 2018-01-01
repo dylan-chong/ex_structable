@@ -3,16 +3,17 @@ elixir: '1.5.2'
 otp_release: '20.1'
 
 # http://blog.danielberkompas.com/elixir/2015/04/03/run-dialyzer-on-elixir-on-travis.html
-before_script:
-  # Set download location
-  - export PLT_FILENAME=elixir-${TRAVIS_ELIXIR_VERSION}_${TRAVIS_OTP_RELEASE}.plt
-  - export PLT_LOCATION=/home/travis/$PLT_FILENAME
-  # Download PLT from danielberkompas/travis_elixir_plts on Github
-  # Store in $PLT_LOCATION
-  - wget -O $PLT_LOCATION https://raw.github.com/danielberkompas/travis_elixir_plts/master/$PLT_FILENAME
+# TODO This is temporarily disabled while it doesn't work
+# before_script:
+#   # Set download location
+#   - export PLT_FILENAME=elixir-${TRAVIS_ELIXIR_VERSION}_${TRAVIS_OTP_RELEASE}.plt
+#   - export PLT_LOCATION=/home/travis/$PLT_FILENAME
+#   # Download PLT from danielberkompas/travis_elixir_plts on Github
+#   # Store in $PLT_LOCATION
+#   - wget -O $PLT_LOCATION https://raw.github.com/danielberkompas/travis_elixir_plts/master/$PLT_FILENAME
 
 script:
   - export PROJECT_NAME=ex_structable
   - mix test
   - mix credo
-  - dialyzer --no_check_plt --plt $PLT_LOCATION --no_native _build/test/lib/$PROJECT_NAME/ebin
+#  - dialyzer --no_check_plt --plt $PLT_LOCATION --no_native _build/test/lib/$PROJECT_NAME/ebin
