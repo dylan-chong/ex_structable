@@ -10,6 +10,7 @@ defmodule ExStructable.Mixfile do
       description: description(),
       start_permanent: Mix.env == :prod,
       deps: deps(),
+      aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         "coveralls": :test,
@@ -42,7 +43,7 @@ defmodule ExStructable.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.11", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test, runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       {:ex_parameterized, "~> 1.3.0", only: :test, runtime: false},
     ]
   end
@@ -60,5 +61,15 @@ defmodule ExStructable.Mixfile do
     "Reduce boilerplate by generating struct `new` and `put` functions. "
     <> "Allows you validate your structs when they are created and updated."
     # If this is changed, update README
+  end
+
+  defp aliases do
+    [
+      check: [
+        "test",
+        "credo",
+        "dialyzer",
+      ],
+    ]
   end
 end
