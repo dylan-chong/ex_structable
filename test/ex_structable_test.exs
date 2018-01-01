@@ -386,4 +386,16 @@ defmodule ExStructableTest do
     end
   end
 
+  describe "TestStruct" do
+    alias ExStructable.TestStruct
+
+    test "new does not crash" do
+      TestStruct.new(length: 1)
+    end
+
+    test "put does not crash" do
+      TestStruct.put(%TestStruct{length: 2}, length: 1)
+    end
+  end
+
 end
