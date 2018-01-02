@@ -54,7 +54,7 @@ defmodule ExStructable.Mixfile do
   defp description do
     # If this is changed, update README
     "Reduce boilerplate by generating struct `new` and `put` functions. "
-    <> "Allows you validate your structs when they are created and updated."
+    <> "and validate your structs when they are created and updated."
     # If this is changed, update README
   end
 

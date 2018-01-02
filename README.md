@@ -5,8 +5,8 @@
 [![](https://img.shields.io/hexpm/v/ex_structable.svg?style=flat)](https://hex.pm/packages/ex_structable)
 
 <!-- If this is changed, update mix.exs description/0 -->
-Reduce boilerplate by generating struct `new` and `put` functions.
-Allows you validate your structs when they are created and updated.
+Reduce boilerplate by generating struct `new` and `put` functions,
+and validate your structs when they are created and updated.
 <!-- If this is changed, update mix.exs description/0 -->
 
 Optionally uses [ExConstructor](https://github.com/appcues/exconstructor) to
@@ -20,7 +20,7 @@ dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_structable, "~> 0.1.0"},
+    {:ex_structable, "~> 0.3.0"},
   ]
 end
 ```
