@@ -41,12 +41,12 @@ defmodule ExStructable.Hooks do
 
   The return value is the return value of
   `YourModule.new/2`/`YourModule.put/3`, so usually returns a struct when
-  validation passes.
+  validation passes. (You could return something else if you want to.)
 
   When validation fails you should raise, or return a custom error value such
   as `{:error, struct, reason}`. If validation fails, one option would be to
   alter the struct so that it is valid. The choice of implementation is up to
-  the developer.
+  you.
 
   By default returns the given struct without any checking.
 
