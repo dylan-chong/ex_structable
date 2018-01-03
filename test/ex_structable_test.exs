@@ -390,4 +390,18 @@ defmodule ExStructableTest do
     ExStructable.TestStruct.create_examples()
   end
 
+  test "when ExConstructor is used with @enforce_keys and error is raised" do
+    assert_raise(
+      ArgumentError,
+      ~r"ExConstructor does not work with @enforce_keys.*",
+      fn ->
+        defmodule ExConstructorWithEnforceKeys do
+          @enforce_keys [:a]
+          defstruct [:a]
+          use ExStructable, use_ex_constructor_library: true
+        end
+      end
+    )
+  end
+
 end

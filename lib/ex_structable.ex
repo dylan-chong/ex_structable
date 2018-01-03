@@ -188,7 +188,7 @@ defmodule ExStructable do
       use_ex_constructor_library: false,
       new_function_name: :new,
       put_function_name: :put,
-      strict_keys: true, # TODO this doesn't work on ExConstructor because library is broken
+      strict_keys: true,
     ]
   end
 
@@ -207,6 +207,15 @@ defmodule ExStructable do
 
     quote do
       if unquote(lib_args) do
+        enforced_keys =
+          __MODULE__
+          |> Module.get_attribute(:enforce_keys)
+          |> List.wrap()
+        if enforced_keys != [] do
+          raise ArgumentError, "ExConstructor does not work with @enforce_keys. "
+          <> "Either remove @enforce_keys or :use_ex_constructor_library "
+        end
+
         use ExConstructor, unquote(lib_args)
       end
 
