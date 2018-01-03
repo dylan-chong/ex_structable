@@ -39,10 +39,14 @@ defmodule ExStructable.Hooks do
   @doc """
   Override to check that the created struct has valid values.
 
-  You should raise, or return a custom error value such as `{:error, struct}`
-  when validation fails. The return value is the return value of
+  The return value is the return value of
   `YourModule.new/2`/`YourModule.put/3`, so usually returns a struct when
   validation passes.
+
+  When validation fails you should raise, or return a custom error value such
+  as `{:error, struct, reason}`. If validation fails, one option would be to
+  alter the struct so that it is valid. The choice of implementation is up to
+  the developer.
 
   By default returns the given struct without any checking.
 
