@@ -27,8 +27,17 @@ end
 
 ## The Problem
 
-If you want to write some validation for your struct, you need to write the
-boilerplate `new` and `put` methods manually.
+Let's start with a simple struct.
+
+```elixir
+defmodule Point do
+  @enforce_keys [:x, :y]
+  defstruct [:x, :y, :z]
+end
+```
+
+Now, onto the problem. If you want to write some validation for your struct,
+you need to write the boilerplate `new` and `put` methods manually.
 
 ```elixir
 defmodule Point do
