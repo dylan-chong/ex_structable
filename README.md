@@ -27,17 +27,8 @@ end
 
 ## The Problem
 
-Let's start with a simple struct.
-
-```elixir
-defmodule Point do
-  @enforce_keys [:x, :y]
-  defstruct [:x, :y, :z]
-end
-```
-
-Now, onto the problem. If you want to write some validation for your struct,
-you need to write the boilerplate `new` and `put` methods manually.
+If you want to write some validation for your struct, you need to write the
+boilerplate `new` and `put` methods manually.
 
 ```elixir
 defmodule Point do
@@ -75,40 +66,6 @@ Point.new(x: -1, y: 2)
 # Fails validation, as expected
 ```
 
-And if you don't want to bother with validation yet, you might want to still
-add `new` and `put` methods to be consistent (or to make it easier to add
-validation later).
-
-```elixir
-defmodule PointNoValidation do
-  @enforce_keys [:x, :y]
-  defstruct [:x, :y, :z]
-
-  def new(args) do
-    args = Keyword.new(args)
-
-    __MODULE__
-    |> Kernel.struct!(args)
-    |> validate_struct()
-  end
-
-  def put(struct, args) do
-    args = Keyword.new(args)
-
-    struct
-    |> Kernel.struct!(args)
-    |> validate_struct()
-  end
-
-  def validate_struct(struct) do
-    struct
-  end
-end
-
-PointNoValidation.new(x: 1, y: 2)
-# => %PointNoValidation{x: 1, y: 2, z: nil} # Still works!
-```
-
 And you have to write this boilerplate for every module you have! That can be a
 lot of boilerplate!
 
@@ -140,18 +97,16 @@ Point.new(x: -1, y: 2)
 # Fails validation, as expected
 ```
 
-And when we don't want validation, the module is as clean as a whistle...
+And if you don't need validation yet, you might want to still add `new` and
+`put` methods to be consistent (or to make it easier to add validation later).
+In that case, you can just leave out the `validate_struct/2` implementation.
 
 ```elixir
-defmodule PointNoValidation do
+defmodule Point do
   @enforce_keys [:x, :y]
   defstruct [:x, :y, :z]
 
   use ExStructable # Adds `new` and `put` dynamically
-end
-
-PointNoValidation.new(x: 1, y: 2)
-# => %PointNoValidation{x: 1, y: 2, z: nil} # Still works!
 ```
 
 ## More Info
