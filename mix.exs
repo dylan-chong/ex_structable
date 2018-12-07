@@ -8,13 +8,13 @@ defmodule ExStructable.Mixfile do
       elixir: "~> 1.5",
       package: package(),
       description: description(),
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: preferred_cli_env(),
       source_url: github_url(),
-      homepage_url: github_url(),
+      homepage_url: github_url()
     ]
   end
 
@@ -39,7 +39,7 @@ defmodule ExStructable.Mixfile do
       {:ex_doc, "~> 0.11", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test, runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
-      {:ex_parameterized, "~> 1.3.0", only: :test, runtime: false},
+      {:ex_parameterized, "~> 1.3.0", only: :test, runtime: false}
     ]
   end
 
@@ -47,14 +47,15 @@ defmodule ExStructable.Mixfile do
     [
       licenses: ["Apache 2.0"],
       maintainers: ["Dylan Chong"],
-      links: %{"GitHub" => github_url()},
+      links: %{"GitHub" => github_url()}
     ]
   end
 
   defp description do
     # If this is changed, update README
-    "Reduce boilerplate by generating struct `new` and `put` functions. "
-    <> "and validate your structs when they are created and updated."
+    "Reduce boilerplate by generating struct `new` and `put` functions. " <>
+      "and validate your structs when they are created and updated."
+
     # If this is changed, update README
   end
 
@@ -63,8 +64,8 @@ defmodule ExStructable.Mixfile do
       check: [
         "test",
         "credo",
-        "dialyzer",
-      ],
+        "dialyzer"
+      ]
     ]
   end
 
@@ -77,7 +78,7 @@ defmodule ExStructable.Mixfile do
       "coveralls.travis": :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
-      "coveralls.html": :test,
+      "coveralls.html": :test
     ]
   end
 end

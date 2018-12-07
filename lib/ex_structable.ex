@@ -107,7 +107,7 @@ defmodule ExStructable do
   @typedoc """
   Key value pairs to put into the struct.
   """
-  @type args :: keyword | %{required(atom | String.t) => any}
+  @type args :: keyword | %{required(atom | String.t()) => any}
 
   @typedoc """
   Options passed to `use ExStructable`, `new`, and `put`.
@@ -148,8 +148,8 @@ defmodule ExStructable do
       if validated_struct == nil do
         # To prevent accidental mistakes
         raise ExStructable.InvalidHookError,
-        "validate_struct cannot return nil. "
-        <> "Return the struct instead (if validation passed)."
+              "validate_struct cannot return nil. " <>
+                "Return the struct instead (if validation passed)."
       end
 
       validated_struct
@@ -188,7 +188,7 @@ defmodule ExStructable do
       use_ex_constructor_library: false,
       new_function_name: :new,
       put_function_name: :put,
-      strict_keys: true,
+      strict_keys: true
     ]
   end
 
@@ -211,9 +211,11 @@ defmodule ExStructable do
           __MODULE__
           |> Module.get_attribute(:enforce_keys)
           |> List.wrap()
+
         if enforced_keys != [] do
-          raise ArgumentError, "ExConstructor does not work with @enforce_keys. "
-          <> "Either remove @enforce_keys or :use_ex_constructor_library "
+          raise ArgumentError,
+                "ExConstructor does not work with @enforce_keys. " <>
+                  "Either remove @enforce_keys or :use_ex_constructor_library "
         end
 
         use ExConstructor, unquote(lib_args)
@@ -229,12 +231,11 @@ defmodule ExStructable do
       documentation in `ExStructable` and `ExStructable.default_options/0`.
       """
       @spec unquote(new_function_name)(
-        ExStructable.args,
-        ExStructable.options
-      ) :: ExStructable.validation_result
+              ExStructable.args(),
+              ExStructable.options()
+            ) :: ExStructable.validation_result()
       def unquote(new_function_name)(args, override_opts \\ [])
-      when (is_list(args) or is_map(args)) and is_list(override_opts)
-      do
+          when (is_list(args) or is_map(args)) and is_list(override_opts) do
         merged_options = Keyword.merge(unquote(options), override_opts)
 
         struct = create_struct(args, merged_options)
@@ -255,16 +256,15 @@ defmodule ExStructable do
       * override_opts - See `new/2`'s override_opts.
       """
       @spec unquote(put_function_name)(
-        %__MODULE__{},
-        ExStructable.args,
-        ExStructable.options
-      ) :: ExStructable.validation_result
+              %__MODULE__{},
+              ExStructable.args(),
+              ExStructable.options()
+            ) :: ExStructable.validation_result()
       def unquote(put_function_name)(struct = %_{}, args, override_opts \\ [])
-      when (is_list(args) or is_map(args)) and is_list(override_opts)
-      do
+          when (is_list(args) or is_map(args)) and is_list(override_opts) do
         unless struct.__struct__ == __MODULE__ do
           raise ArgumentError,
-            "#{inspect(struct)} struct is not a %#{__MODULE__}{}"
+                "#{inspect(struct)} struct is not a %#{__MODULE__}{}"
         end
 
         merged_options = Keyword.merge(unquote(options), override_opts)
@@ -293,7 +293,8 @@ defmodule ExStructable do
           end
         end
       end
-      defoverridable [create_struct: 2]
+
+      defoverridable create_struct: 2
 
       @impl ExStructable.Hooks
       def put_into_struct(args, struct, options) do
@@ -306,6 +307,7 @@ defmodule ExStructable do
             case lib_args do
               true ->
                 []
+
               _ ->
                 lib_args
             end
@@ -318,27 +320,29 @@ defmodule ExStructable do
           end
         end
       end
-      defoverridable [put_into_struct: 3]
+
+      defoverridable put_into_struct: 3
 
       @impl ExStructable.Hooks
       def validate_struct(struct, _options) do
         struct
       end
-      defoverridable [validate_struct: 2]
+
+      defoverridable validate_struct: 2
 
       @impl ExStructable.Hooks
       def after_new(_result, _options) do
         # Stub
       end
-      defoverridable [after_new: 2]
+
+      defoverridable after_new: 2
 
       @impl ExStructable.Hooks
       def after_put(_result, _options) do
         # Stub
       end
-      defoverridable [after_put: 2]
 
+      defoverridable after_put: 2
     end
-
   end
 end

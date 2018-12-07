@@ -19,9 +19,9 @@ defmodule ExStructable.Hooks do
   This is used in `YourModule.new/2`.
   """
   @callback create_struct(
-    args :: ExStructable.args,
-    options :: ExStructable.options
-  ) :: struct
+              args :: ExStructable.args(),
+              options :: ExStructable.options()
+            ) :: struct
 
   @doc """
   Override to put args into struct in a custom way, and return new struct.
@@ -31,10 +31,10 @@ defmodule ExStructable.Hooks do
   This is used in `YourModule.put/3`.
   """
   @callback put_into_struct(
-    args :: ExStructable.args,
-    struct,
-    options :: ExStructable.options
-  ) :: struct
+              args :: ExStructable.args(),
+              struct,
+              options :: ExStructable.options()
+            ) :: struct
 
   @doc """
   Override to check that the created struct has valid values.
@@ -60,9 +60,9 @@ defmodule ExStructable.Hooks do
   because it raises a FunctionClauseError when the guard isn't matched.
   """
   @callback validate_struct(
-    struct,
-    options :: ExStructable.options
-  ) :: ExStructable.validation_result
+              struct,
+              options :: ExStructable.options()
+            ) :: ExStructable.validation_result()
 
   @doc """
   Called when a struct has passed validation after a call to
@@ -72,9 +72,9 @@ defmodule ExStructable.Hooks do
   Override to add custom functionality.
   """
   @callback after_new(
-    validation_result :: ExStructable.validation_result,
-    options :: ExStructable.options
-  ) :: ignored_return_type
+              validation_result :: ExStructable.validation_result(),
+              options :: ExStructable.options()
+            ) :: ignored_return_type
 
   @doc """
   Called when a struct has passed validation after a call to
@@ -84,8 +84,7 @@ defmodule ExStructable.Hooks do
   Override to add custom functionality.
   """
   @callback after_put(
-    validation_result :: ExStructable.validation_result,
-    options :: ExStructable.options
-  ) :: ignored_return_type
-
+              validation_result :: ExStructable.validation_result(),
+              options :: ExStructable.options()
+            ) :: ignored_return_type
 end

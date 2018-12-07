@@ -11,12 +11,12 @@ defmodule ExStructable.TestStruct do
 
   def create_examples do
     # These examples should not cause dialyzer errors
-    new([length: 1])
-    new([length: 1], [strict_keys: true])
+    new(length: 1)
+    new([length: 1], strict_keys: true)
 
     %{length: 1}
     |> new()
     |> put(%{x: 1})
-    |> put(%{y: 1}, [strict_keys: false])
+    |> put(%{y: 1}, strict_keys: false)
   end
 end

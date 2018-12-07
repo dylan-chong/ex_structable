@@ -42,7 +42,7 @@ defmodule ExStructableTest do
 
     @impl true
     def validate_struct(struct, _) do
-      if struct.h < 0, do: raise ArgumentError, "Invalid struct"
+      if struct.h < 0, do: raise(ArgumentError, "Invalid struct")
       struct
     end
 
@@ -64,9 +64,11 @@ defmodule ExStructableTest do
 
   defmodule JStruct do
     defstruct [:the_field]
-    use ExStructable, use_ex_constructor_library: [
-      camelcase: false
-    ]
+
+    use ExStructable,
+      use_ex_constructor_library: [
+        camelcase: false
+      ]
   end
 
   defmodule KStruct do
@@ -89,13 +91,13 @@ defmodule ExStructableTest do
 
     @impl true
     def validate_struct(struct = %LStruct{the_field: f}, _) do
-      if f < 0, do: raise ArgumentError, "invalid param"
+      if f < 0, do: raise(ArgumentError, "invalid param")
       struct
     end
   end
 
   defmodule Point3D do
-#     @enforce_keys [:x, :y] # TODO Uncommented once library is fixed
+    #     @enforce_keys [:x, :y] # TODO Uncommented once library is fixed
     defstruct [:x, :y, :z]
 
     use ExStructable, use_ex_constructor_library: true
@@ -112,15 +114,15 @@ defmodule ExStructableTest do
 
   defmodule CustomNames do
     defstruct [:the_field]
-    use ExStructable, [
+
+    use ExStructable,
       use_ex_constructor_library: true,
       new_function_name: :custom_new,
-      put_function_name: :custom_put,
-    ]
+      put_function_name: :custom_put
 
     @impl true
     def validate_struct(struct = %CustomNames{the_field: f}, _) do
-      if f < 0, do: raise ArgumentError, "invalid param"
+      if f < 0, do: raise(ArgumentError, "invalid param")
       struct
     end
   end
@@ -156,7 +158,7 @@ defmodule ExStructableTest do
     test "new fails with default options" do
       assert_raise(
         KeyError,
-        fn -> ABCStruct.new([a: 1, invalid: 2]) end
+        fn -> ABCStruct.new(a: 1, invalid: 2) end
       )
     end
   end
@@ -175,7 +177,7 @@ defmodule ExStructableTest do
     end
 
     test "new creates with invalid param and validate_struct: false" do
-      assert FStruct.new([f: -1], [validate_struct: false]) == %FStruct{f: -1}
+      assert FStruct.new([f: -1], validate_struct: false) == %FStruct{f: -1}
     end
 
     test "fails if returns nil" do
@@ -188,16 +190,14 @@ defmodule ExStructableTest do
 
     test "puts data with invalid param and validate_struct: false" do
       expected = %FStruct{f: -1}
-      assert expected == FStruct.put(%FStruct{f: 2}, [f: -1], [
-        validate_struct: false,
-      ])
+      assert expected == FStruct.put(%FStruct{f: 2}, [f: -1], validate_struct: false)
     end
 
     test "put fails with invalid data" do
       assert_raise(
         ArgumentError,
         "invalid param",
-        fn -> FStruct.put(%FStruct{f: 1}, [f: -1]) end
+        fn -> FStruct.put(%FStruct{f: 1}, f: -1) end
       )
     end
   end
@@ -206,20 +206,20 @@ defmodule ExStructableTest do
     test "fails with non-struct" do
       assert_raise(
         FunctionClauseError,
-        fn -> FStruct.put(:not_a_struct, [f: 1]) end
+        fn -> FStruct.put(:not_a_struct, f: 1) end
       )
     end
 
     test "fails with wrong type of struct" do
       assert_raise(
         ArgumentError,
-        fn -> FStruct.put(%GStruct{g: 2}, [g: 1]) end
+        fn -> FStruct.put(%GStruct{g: 2}, g: 1) end
       )
     end
 
     test "updates data successfully" do
       expected = %KStruct{k: 1, l: 2}
-      assert expected == KStruct.put(%KStruct{k: 2, l: 2}, [k: 1])
+      assert expected == KStruct.put(%KStruct{k: 2, l: 2}, k: 1)
     end
 
     test "updates data successfully from map" do
@@ -229,9 +229,10 @@ defmodule ExStructableTest do
 
     test "fails with invalid key" do
       f = %FStruct{f: 2}
+
       assert_raise(
         KeyError,
-        fn -> FStruct.put(f, [invalid_key: 1]) end
+        fn -> FStruct.put(f, invalid_key: 1) end
       )
     end
   end
@@ -258,14 +259,14 @@ defmodule ExStructableTest do
       assert_raise(
         RuntimeError,
         "after_put called",
-        fn -> HStruct.put(%HStruct{h: 1}, [h: 2]) end
+        fn -> HStruct.put(%HStruct{h: 1}, h: 2) end
       )
     end
 
     test "is not called after failed put" do
       assert_raise(
         ArgumentError,
-        fn -> HStruct.put(%HStruct{h: 1}, [h: -1]) end
+        fn -> HStruct.put(%HStruct{h: 1}, h: -1) end
       )
     end
   end
@@ -283,10 +284,12 @@ defmodule ExStructableTest do
 
     test "put adds from Map" do
       expected = %Point3D{x: 3, y: 2, z: nil}
+
       result =
         %{x: 1, y: 2}
         |> Point3D.new()
         |> Point3D.put(%{x: 3})
+
       assert expected == result
     end
 
@@ -313,28 +316,28 @@ defmodule ExStructableTest do
       )
     end
 
-# TODO Uncommented once ExConstructor library is fixed
-#     test "new fails with missing @enforce_key" do
-#       assert_raise(
-#         ArgumentError,
-#         fn -> Point3D.new(x: 1) end
-#       )
-#     end
-#
-#     test "new fails with invalid key" do
-#       assert_raise(
-#         KeyError,
-#         fn -> Point3D.new(invalid: 3, x: 1, y: 2) end
-#       )
-#     end
-#
-#     test "put fails with invalid key" do
-#       p = Point3D.new(x: 1, y: 2)
-#       assert_raise(
-#         KeyError,
-#         fn -> Point3D.put(p, invalid: 3) end
-#       )
-#     end
+    # TODO Uncommented once ExConstructor library is fixed
+    #     test "new fails with missing @enforce_key" do
+    #       assert_raise(
+    #         ArgumentError,
+    #         fn -> Point3D.new(x: 1) end
+    #       )
+    #     end
+    #
+    #     test "new fails with invalid key" do
+    #       assert_raise(
+    #         KeyError,
+    #         fn -> Point3D.new(invalid: 3, x: 1, y: 2) end
+    #       )
+    #     end
+    #
+    #     test "put fails with invalid key" do
+    #       p = Point3D.new(x: 1, y: 2)
+    #       assert_raise(
+    #         KeyError,
+    #         fn -> Point3D.put(p, invalid: 3) end
+    #       )
+    #     end
   end
 
   describe "with customised `new` function" do
@@ -362,14 +365,17 @@ defmodule ExStructableTest do
   describe "with customised `put` function" do
     test "the customised function exists" do
       expected = %CustomNames{the_field: 1}
-      assert expected == CustomNames.custom_put(
-        %CustomNames{the_field: 2},
-        the_field: 1
-      )
+
+      assert expected ==
+               CustomNames.custom_put(
+                 %CustomNames{the_field: 2},
+                 the_field: 1
+               )
     end
 
     test "the `put` function does not exist" do
       c = %CustomNames{the_field: 2}
+
       assert_raise(
         UndefinedFunctionError,
         fn -> CustomNames.put(c, the_field: 1) end
@@ -378,6 +384,7 @@ defmodule ExStructableTest do
 
     test "validate_struct is still called" do
       c = %CustomNames{the_field: 2}
+
       assert_raise(
         ArgumentError,
         "invalid param",
@@ -403,5 +410,4 @@ defmodule ExStructableTest do
       end
     )
   end
-
 end
