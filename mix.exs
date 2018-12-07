@@ -71,9 +71,9 @@ defmodule ExStructable.Mixfile do
   defp preferred_cli_env do
     [
       # Aliases
-      "check": :test,
+      check: :test,
       # Coveralls
-      "coveralls": :test,
+      coveralls: :test,
       "coveralls.travis": :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
