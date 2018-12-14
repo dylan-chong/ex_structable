@@ -107,8 +107,24 @@ defmodule Point do
   defstruct [:x, :y, :z]
 
   use ExStructable # Adds `new` and `put` dynamically
+end
 ```
 
 ## More Info
 
 [For more detailed API documentation, see HexDocs](https://hexdocs.pm/ex_structable/api-reference.html).
+
+## Contributing
+
+Pull requests are welcomed! Please do discuss suggestions in an issue before
+implementing them.
+
+### Making a new release
+
+1. `git checkout master`
+1. Make sure tests pass `mix test`
+1. Update version in `mix.exs`
+1. Ensure your user has been registered `mix hex.user register`
+1. Run `mix hex.publish` (see for more information https://hex.pm/docs/publish)
+1. `git tag <VERSION>`
+1. `git push origin <VERSION>`

@@ -4,7 +4,7 @@ defmodule ExStructable.Mixfile do
   def project do
     [
       app: :ex_structable,
-      version: "0.3.1",
+      version: "0.4.0",
       elixir: "~> 1.5",
       package: package(),
       description: description(),
